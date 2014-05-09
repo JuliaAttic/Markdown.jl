@@ -1,4 +1,8 @@
+#jewel module Markdown
+
 abstract Content
+
+Base.push!(md::Content, x) = push!(md.content, x)
 
 type Block <: Content
   content::Vector{Content}

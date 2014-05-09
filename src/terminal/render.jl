@@ -2,6 +2,8 @@ include("formatting.jl")
 
 # Render Content to Terminal
 
+# Need separate print and print_inline
+
 const margin = 2
 
 function terminal_print(io::IO, md::Block; columns = nothing)
