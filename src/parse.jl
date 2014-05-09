@@ -158,8 +158,6 @@ standard = Config(
   "#`=-", [hash_header, paragraph],
   "*_[`", [inline_code, asterisk_bold, asterisk_italic])
 
-# The interface needs to change – modify tree directly and return true/false
-
 function parse(stream::IO, config::Config = standard)
   markdown = Block()
   discard_whitespace(stream)
