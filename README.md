@@ -14,3 +14,5 @@ Currently supported flavours:
 `:julia` is the default, but others can be chosen with the `flavour` keyword argument.
 
 In the near future Markdown.jl will provide support for "Literate Julia" files, as well as output of those files to HTML, PDF, the terminal, and IJulia notebook format.
+
+![Markdown.jl Example](test.png)
