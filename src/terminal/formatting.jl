@@ -1,3 +1,5 @@
+#jewel module Markdown
+
 # Styles
 
 const text_formats = [
@@ -48,7 +50,11 @@ end
 words(s) = split(s, " ")
 lines(s) = split(s, "\n")
 
+# This could really be more efficient
 function wrapped_lines(s::String; width = 80, i = 0)
+  if ismatch(r"\n", s)
+    return [map(s->wrapped_lines(s, width = width, i = i), split(s, "\n"))...]
+  end
   ws = words(s)
   lines = String[ws[1]]
   i += ws[1] |> ansi_length

@@ -1,3 +1,5 @@
+#jewel module Markdown
+
 include("formatting.jl")
 
 # Render Content to Terminal
@@ -38,16 +40,16 @@ function terminal_print(io::IO, md::List; columns = 80) # TODO: handle no column
   println(io)
 end
 
-function terminal_print(io::IO, md::Header; columns = nothing)
+function terminal_print(io::IO, md::Header{1}; columns = nothing)
   if columns == nothing
     println(io, 2margin, md.text)
-    println(io, 2margin,"="^min(length(md.text), 30))
+    println(io, 2margin,"–"^min(length(md.text), 30))
     println(io)
   else
     with_output_format(:bold, io) do io
       print_centred(io, md.text, width = columns - 4margin, columns = columns)
     end
-    print_centred(io, "="^min(length(md.text), div(columns, 2)), columns = columns)
+    print_centred(io, "-"*"–"^min(length(md.text), div(columns, 2))*"-", columns = columns)
     println(io)
   end
 end
@@ -76,6 +78,10 @@ end
 
 function terminal_print(io::IO, md::Italic)
   print_with_format(:underline, io, md.text)
+end
+
+function terminal_print(io::IO, md::Image)
+  print(io, "(Image: $(md.alt))")
 end
 
 # Allows display of Plain, Bold etc. but causes infinite loops

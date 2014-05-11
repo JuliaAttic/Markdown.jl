@@ -2,7 +2,14 @@
 
 abstract Content
 
+# Forward some array methods
+
 Base.push!(md::Content, x) = push!(md.content, x)
+Base.getindex(md::Content, args...) = md.content[args...]
+Base.setindex!(md::Content, args...) = setindex!(md.content, args...)
+Base.endof(md::Content) = endof(md.content)
+Base.length(md::Content) = length(md.content)
+Base.isempty(md::Content) = isempty(md.content)
 
 type Block <: Content
   content::Vector{Content}
@@ -29,27 +36,39 @@ end
 
 List(xs...) = List([xs...])
 
-type Header{T<:String, level} <: Content
-  text::T
+type Header{level} <: Content
+  text::UTF8String
 end
 
-Header(s::String, level::Int) = Header{typeof(s), level}(s)
+Header(s::String, level::Int) = Header{level}(s)
 Header(s::String) = Header(s, 1)
 
-typealias Header1{T} Header{T, 1}
-
-type Code{T<:String} <: Content
-  code::T
+type Code <: Content
+  language::UTF8String
+  code::UTF8String
+  line::Int
 end
 
-type Plain{T<:String} <: Content
-  text::T
+Code(code) = Code("", code, 0)
+
+type Plain <: Content
+  text::UTF8String
 end
 
-type Bold{T<:String} <: Content
-  text::T
+type Bold <: Content
+  text::UTF8String
 end
 
-type Italic{T<:String} <: Content
-  text::T
+type Italic <: Content
+  text::UTF8String
+end
+
+type Link <: Content
+  text::UTF8String
+  url::UTF8String
+end
+
+type Image <: Content
+  url::UTF8String
+  alt::UTF8String
 end
