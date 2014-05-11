@@ -1,7 +1,9 @@
 # Markdown
 
-    Markdown.parse("file.md")
-    readme("Markdown") # or any other installed package
+```julia
+Markdown.parse("file.md")
+readme("Markdown") # or any other installed package
+```
 
 **Markdown.jl** is a flexible and efficient markdown parser for Julia. It currently supports parsing of the most common elements and display in a terminal.
 
