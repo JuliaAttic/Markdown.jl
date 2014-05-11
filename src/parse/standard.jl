@@ -141,7 +141,6 @@ function en_dash(stream::IO)
   end
 end
 
-# Not totally proud of this one.
 function image(stream::IO)
   start = position(stream)
   while true
