@@ -152,7 +152,6 @@ function image(stream::IO)
     url = read_until(stream, ")")
     url == nothing && break
     return Image(url, alt)
-    break
   end
   seek(stream, start)
   return nothing
