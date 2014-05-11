@@ -23,6 +23,7 @@ include("parse/GitHub.jl")
 include("parse/doc.jl")
 
 include("render/plain.jl")
+include("render/html.jl")
 
 include("terminal/render.jl")
 include("terminal/pager.jl")
