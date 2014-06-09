@@ -4,6 +4,7 @@
 # ––––––––––––––
 
 function paragraph(stream::IO, block::Block, config::Config)
+  skip_blank_lines(stream) > 0 && return true
   buffer = IOBuffer()
   md = Paragraph()
   push!(block, md)
@@ -35,15 +36,15 @@ end
 
 # Currently only supports level = 1
 function hash_header(stream::IO, md::Block, config::Config)
-  startswith(stream, "#") || return false
+  starts_with(stream, "#") || return false
   level = 1
-  while startswith(stream, "#")
+  while starts_with(stream, "#")
     level += 1
   end
   skip_whitespace(stream, newlines = false)
   h = readline(stream) |> chomp
   if !isempty(h)
-    push!(md.content, Header(h))
+    push!(md.content, Header(h, level))
     return true
   else
     return false
@@ -70,7 +71,7 @@ function indented_code(stream::IO, block::Block, config::Config)
   start = position(stream)
   skip_blank_lines(stream)
   buffer = IOBuffer()
-  while startswith(stream, "    ")
+  while starts_with(stream, "    ")
     write(buffer, readline(stream))
   end
   code = takebuf_string(buffer)
@@ -83,14 +84,14 @@ end
 function list(stream::IO, block::Block, config::Config)
   start = position(stream)
   skip_whitespace(stream)
-  startswith(stream, ["* ", "• "]) || (seek(stream, start); return false)
+  starts_with(stream, ["* ", "• "]) || (seek(stream, start); return false)
   the_list = List()
   buffer = IOBuffer()
   fresh_line = false
   while !eof(stream)
     if fresh_line
       skip_whitespace(stream)
-      if startswith(stream, ["* ", "• "])
+      if starts_with(stream, ["* ", "• "])
         push!(the_list, Plain(takebuf_string(buffer)))
         buffer = IOBuffer()
       else
@@ -136,7 +137,7 @@ function inline_code(stream::IO)
 end
 
 function en_dash(stream::IO)
-  if startswith(stream, "--")
+  if starts_with(stream, "--")
     return Plain("–")
   end
 end
@@ -144,11 +145,11 @@ end
 function image(stream::IO)
   start = position(stream)
   while true
-    startswith(stream, "![") || break
+    starts_with(stream, "![") || break
     alt = read_until(stream, "]")
     alt == nothing && break
     skip_whitespace(stream)
-    startswith(stream, "(") || break
+    starts_with(stream, "(") || break
     url = read_until(stream, ")")
     url == nothing && break
     return Image(url, alt)

@@ -1,12 +1,11 @@
 #jewel module Markdown
 
 function fenced_code(stream::IO, block::Block, config::Config)
-  skip_whitespace(stream)
-  startswith(stream, "```") || return false
+  starts_with(stream, "```", padding = true) || return false
   readline(stream)
   buffer = IOBuffer()
   while !eof(stream)
-    startswith(stream, "```") && break
+    starts_with(stream, "```") && break
     write(buffer, read(stream, Char))
   end
   push!(block, Code(takebuf_string(buffer) |> chomp))

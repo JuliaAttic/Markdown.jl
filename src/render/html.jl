@@ -75,4 +75,3 @@ function writemime(io::IO, ::MIME"text/html", md::Image)
 end
 
 html_inline(io::IO, el::Content) = writemime(io, "text/html", el)
-

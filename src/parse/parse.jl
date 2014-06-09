@@ -23,7 +23,7 @@ function stop(stream::IO, trigger::Char)
 end
 
 function stop(stream::IO, trigger::String)
-  startswith(stream, trigger, eat = false)
+  starts_with(stream, trigger, eat = false)
 end
 
 function stop(stream::IO, trigger::Function)
@@ -59,6 +59,7 @@ parse_inner(stream::IO, config::Config; offset = 0) =
   parse_inner(stream, config.inner.parsers; offset=offset)
 
 function parse(stream::IO, block::Block, config::Config)
+  eof(stream) && return false
   for parser in config.parsers
     parser(stream, block, config) && return true
   end
@@ -70,6 +71,6 @@ const flavours = Dict{Symbol, Config}()
 function parse(stream::IO; flavour = julia)
   isa(flavour, Symbol) && (flavour = flavours[flavour])
   markdown = Block()
-  while !eof(stream) && parse(stream, markdown, flavour) end
+  while parse(stream, markdown, flavour) end
   return markdown
 end
