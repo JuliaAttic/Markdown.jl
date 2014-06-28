@@ -16,13 +16,13 @@ const text_formats = [
   :negative  => "\e[7m"]
 
 function with_output_format(f::Function, formats::Vector{Symbol}, io::IO, args...)
-    Base.have_color && for format in formats
-      print(io, get(text_formats, format, ""))
-    end
-    try f(io, args...)
-    finally
-        Base.have_color && print(io, text_formats[:reset])
-    end
+  Base.have_color && for format in formats
+    print(io, get(text_formats, format, ""))
+  end
+  try f(io, args...)
+  finally
+    Base.have_color && print(io, text_formats[:reset])
+  end
 end
 
 with_output_format(f::Function, format::Symbol, args...) =
