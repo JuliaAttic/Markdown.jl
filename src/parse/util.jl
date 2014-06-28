@@ -1,5 +1,3 @@
-#jewel module Markdown
-
 import Base: peek
 
 const whitespace = " \t"

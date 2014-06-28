@@ -1,5 +1,3 @@
-#jewel module Markdown
-
 import Base.writemime
 
 function with_tag(f, io, tag)

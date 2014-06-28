@@ -1,5 +1,3 @@
-#jewel module Markdown
-
 # Block elements
 # ––––––––––––––
 

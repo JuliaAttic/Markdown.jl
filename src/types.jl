@@ -1,5 +1,3 @@
-#jewel module Markdown
-
 abstract Content
 
 # Forward some array methods

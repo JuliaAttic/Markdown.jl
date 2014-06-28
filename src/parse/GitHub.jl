@@ -1,5 +1,3 @@
-#jewel module Markdown
-
 function fenced_code(stream::IO, block::Block, config::Config)
   starts_with(stream, "```", padding = true) || return false
   readline(stream)

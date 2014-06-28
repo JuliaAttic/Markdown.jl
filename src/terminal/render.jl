@@ -1,5 +1,3 @@
-#jewel module Markdown
-
 include("formatting.jl")
 
 # Render Content to Terminal

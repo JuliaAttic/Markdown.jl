@@ -1,5 +1,3 @@
-#jewel module Markdown
-
 # Styles
 
 const text_formats = [

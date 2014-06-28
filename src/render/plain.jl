@@ -1,5 +1,3 @@
-#jewel module Markdown
-
 import Base.writemime
 
 # writemime seems to take priority over show?

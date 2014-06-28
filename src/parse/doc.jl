@@ -1,5 +1,3 @@
-#jewel module Markdown
-
 """
 This file contains markdown extensions designed to make documenting
 Julia easy peasy.

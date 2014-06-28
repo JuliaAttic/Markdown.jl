@@ -1,5 +1,3 @@
-#jewel module Markdown
-
 include("util.jl")
 
 export Config
