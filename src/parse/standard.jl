@@ -9,10 +9,9 @@ function paragraph(stream::IO, block::Block, config::Config)
   skip_whitespace(stream)
   while !eof(stream)
     char = read(stream, Char)
-    if char == '\n'
-      eof(stream) && break
-      next = peek(stream)
-      if next == '\n' || stop(stream, config.triggers)
+    if char == '\n' || char == '\r'
+#       char == '\n' && starts_with(stream, "\r")
+      if starts_with(stream, ["\n", "\r"], padding = true, newlines = false) || stop(stream, config.triggers)
         break
       else
         write(buffer, ' ')
