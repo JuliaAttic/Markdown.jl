@@ -104,5 +104,5 @@ import Base.show, Base.Terminals.TextTerminal
 function show(term::TextTerminal, md::Content)
   global tty = term
   println(term)
-  terminal_print(term, md, columns = size(term).width)
+  terminal_print(term, md, columns = size(term)[2])
 end
