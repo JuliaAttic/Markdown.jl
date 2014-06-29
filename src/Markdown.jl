@@ -1,5 +1,7 @@
 module Markdown
 
+using Lazy
+
 include("standard/types.jl")
 include("parse/parse.jl")
 include("standard/standard.jl")

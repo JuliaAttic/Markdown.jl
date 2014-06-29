@@ -155,11 +155,27 @@ function image(stream::IO)
   return nothing
 end
 
+function link(stream::IO)
+  start = position(stream)
+  while true
+    starts_with(stream, "[") || break
+    text = read_until(stream, "]")
+    text == nothing && break
+    skip_whitespace(stream)
+    starts_with(stream, "(") || break
+    url = read_until(stream, ")")
+    url == nothing && break
+    return Link(text, url)
+  end
+  seek(stream, start)
+  return nothing
+end
+
 standard = Config(
   # Block elements
   ["```", '#', underline_header_trigger],
   [list, indented_code, underline_header, hash_header, paragraph],
   # Inline elements
-  "-`*!", [en_dash, inline_code, asterisk_bold, asterisk_italic, image])
+  "-`*![", [en_dash, inline_code, asterisk_bold, asterisk_italic, image, link])
 
 flavours[:standard] = standard
