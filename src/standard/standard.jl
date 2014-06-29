@@ -150,12 +150,6 @@ function inline_code(stream::IO)
   return result == nothing ? nothing : Code(result)
 end
 
-function en_dash(stream::IO)
-  if starts_with(stream, "--")
-    return Plain("–")
-  end
-end
-
 function image(stream::IO)
   start = position(stream)
   while true
@@ -188,11 +182,33 @@ function link(stream::IO)
   return nothing
 end
 
+# Punctuation
+
+function en_dash(stream::IO)
+  if starts_with(stream, "--")
+    return Plain("–")
+  end
+end
+
+const escape_chars = "\\`*_#+-.!{}[]()"
+
+function escapes(stream::IO)
+  pos = position(stream)
+  if starts_with(stream, "\\") && !eof(stream) && (c = peek(stream)) in escape_chars
+    return Plain(read(stream, Char) |> string)
+  end
+  seek(stream, pos)
+  return
+end
+
+# Config
+# ––––––
+
 standard = Config(
   # Block elements
   ["```", '#', underline_header_trigger],
   [list, indented_code, blockquote, underline_header, hash_header, paragraph],
   # Inline elements
-  "-`*![", [en_dash, inline_code, asterisk_bold, asterisk_italic, image, link])
+  "\\-`*![", [escapes, en_dash, inline_code, asterisk_bold, asterisk_italic, image, link])
 
 flavours[:standard] = standard
