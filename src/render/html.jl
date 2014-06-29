@@ -72,4 +72,8 @@ function writemime(io::IO, ::MIME"text/html", md::Image)
   print(io, """<img src="$(md.url)" alt="$(md.alt)"></img>""")
 end
 
+function writemime(io::IO, ::MIME"text/html", md::Link)
+  print(io, """<a href="$(md.url)">$(md.text)</a>""")
+end
+
 html_inline(io::IO, el::Content) = writemime(io, "text/html", el)

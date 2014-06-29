@@ -87,6 +87,10 @@ function terminal_print(io::IO, md::Image)
   print(io, "(Image: $(md.alt))")
 end
 
+function terminal_print(io::IO, md::Link)
+  print(io, md.text)
+end
+
 # Allows display of Plain, Bold etc. but causes infinite loops
 terminal_print(io::IO, md::Content; columns = nothing) =
   terminal_print(io, md)
