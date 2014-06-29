@@ -1,5 +1,7 @@
 import Base.writemime
 
+export html
+
 function with_tag(f, io, tag)
   print(io, "<$tag>")
   f()
@@ -40,6 +42,12 @@ function writemime(io::IO, ::MIME"text/html", md::Paragraph)
   end
 end
 
+function writemime(io::IO, ::MIME"text/html", md::BlockQuote)
+  with_tag(io, "blockquote") do
+    writemime(io, "text/html", Block(md.content))
+  end
+end
+
 function writemime(io::IO, ::MIME"text/html", md::List)
   with_tag(io, "ul") do
     for item in md.content
@@ -77,3 +85,5 @@ function writemime(io::IO, ::MIME"text/html", md::Link)
 end
 
 html_inline(io::IO, el::Content) = writemime(io, "text/html", el)
+
+html(md::Content) = stringmime("text/html", md)

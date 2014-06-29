@@ -25,6 +25,14 @@ end
 
 Paragraph(xs...) = Paragraph([xs...])
 
+type BlockQuote <: Content
+  content::Vector{Content}
+
+  BlockQuote(x::AbstractVector) = new(x)
+end
+
+BlockQuote(xs...) = BlockQuote([xs...])
+
 type List <: Content
   content::Vector{Content}
   ordered::Bool

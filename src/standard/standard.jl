@@ -68,13 +68,30 @@ function indented_code(stream::IO, block::Block, config::Config)
   start = position(stream)
   skip_blank_lines(stream)
   buffer = IOBuffer()
-  while starts_with(stream, "    ")
+  while starts_with(stream, "    ") || starts_with(stream, "\t")
     write(buffer, readline(stream))
   end
   code = takebuf_string(buffer)
   !isempty(code) && (push!(block, Code(chomp(code))); return true)
   seek(stream, start)
   return false
+end
+
+function blockquote(stream::IO, block::Block, config::Config)
+  start = position(stream)
+  skip_blank_lines(stream)
+  buffer = IOBuffer()
+  while starts_with(stream, ">")
+    write(buffer, readline(stream))
+  end
+  md = takebuf_string(buffer)
+  if !isempty(md)
+    push!(block, BlockQuote(parse(md).content))
+    return true
+  else
+    seek(stream, start)
+    return false
+  end
 end
 
 # Todo: ordered lists, inline formatting
@@ -174,7 +191,7 @@ end
 standard = Config(
   # Block elements
   ["```", '#', underline_header_trigger],
-  [list, indented_code, underline_header, hash_header, paragraph],
+  [list, indented_code, blockquote, underline_header, hash_header, paragraph],
   # Inline elements
   "-`*![", [en_dash, inline_code, asterisk_bold, asterisk_italic, image, link])
 

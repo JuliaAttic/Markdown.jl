@@ -29,6 +29,14 @@ function terminal_print(io::IO, md::Paragraph; columns = nothing)
   println(io)
 end
 
+function terminal_print(io::IO, md::BlockQuote; columns = nothing)
+  s = sprint(io->terminal_print(io, Block(md.content); columns = columns - 10))
+  for line in split(rstrip(s), "\n")
+    println(io, " "^margin, "|", line)
+  end
+  println(io)
+end
+
 function terminal_print(io::IO, md::List; columns = 80) # TODO: handle no column number
   for point in md.content
     print(io, " "^2margin, "• ")
