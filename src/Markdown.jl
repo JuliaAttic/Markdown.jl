@@ -1,16 +1,15 @@
 module Markdown
 
-include("types.jl")
+include("standard/types.jl")
 include("parse/parse.jl")
-include("parse/standard.jl")
-include("parse/GitHub.jl")
-include("parse/doc.jl")
+include("standard/standard.jl")
+include("GitHub/GitHub.jl")
+include("doc/doc.jl")
 
 include("render/plain.jl")
 include("render/html.jl")
 
-include("terminal/render.jl")
-include("terminal/pager.jl")
+include("render/terminal/render.jl")
 
 parse(markdown::String; flavour = julia) = parse(IOBuffer(markdown), flavour = flavour)
 parse_file(file::String; flavour = julia) = parse(readall(file), flavour = flavour)
