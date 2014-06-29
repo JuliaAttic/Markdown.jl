@@ -38,8 +38,8 @@ function hash_header(stream::IO, md::Block, config::Config)
   while starts_with(stream, "#")
     level += 1
   end
-  skip_whitespace(stream, newlines = false)
   h = readline(stream) |> chomp
+  h = match(r"\s*(.*)(?<![#\s])", h).captures[1]
   if !isempty(h)
     push!(md.content, Header(h, level))
     return true
