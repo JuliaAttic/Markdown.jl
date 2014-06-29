@@ -1,6 +1,6 @@
 import Base: peek
 
-const whitespace = " \t"
+const whitespace = " \t\r"
 
 """
 Skip any leading whitespace. Returns io.
@@ -50,9 +50,9 @@ Test if the stream starts with the given string.
 `eat` specifies whether to advance on success (true by default).
 `padding` specifies whether leading whitespace should be ignored.
 """
-function starts_with(stream::IO, s::String; eat = true, padding = false)
+function starts_with(stream::IO, s::String; eat = true, padding = false, newlines = true)
   start = position(stream)
-  padding && skip_whitespace(stream)
+  padding && skip_whitespace(stream, newlines = newlines)
   result = true
   for char in s
     !eof(stream) && read(stream, Char) == char ||
@@ -62,8 +62,20 @@ function starts_with(stream::IO, s::String; eat = true, padding = false)
   return result
 end
 
-function starts_with{T<:String}(stream::IO, ss::Vector{T})
-  any(s->starts_with(stream, s), ss)
+function starts_with{T<:String}(stream::IO, ss::Vector{T}; kws...)
+  any(s->starts_with(stream, s; kws...), ss)
+end
+
+function starts_with(stream::IO, r::Regex; eat = true, padding = false)
+  @assert beginswith(r.pattern, "^")
+  start = position(stream)
+  padding && skip_whitespace(stream)
+  line = chomp(readline(stream))
+  seek(stream, start)
+  m = match(r, line)
+  m == nothing && return ""
+  eat && @dotimes length(m.match) read(stream, Char)
+  return m.match
 end
 
 """
