@@ -63,7 +63,7 @@ function writemime(io::IO, ::MIME"text/html", md::Bold)
 end
 
 function writemime(io::IO, ::MIME"text/html", md::Italic)
-  with_tag(io, "italic") do
+  with_tag(io, "em") do
     print(io, md.text)
   end
 end
