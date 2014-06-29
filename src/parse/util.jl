@@ -32,9 +32,12 @@ Returns true if the line contains only (and
 at least one of) the characters given.
 """
 function next_line_contains_only(io::IO, chars::String; allow_whitespace = true,
-                                                        eat = false)
+                                                        eat = false,
+                                                        allowempty = false)
   start = position(io)
   l = readline(io) |> chomp
+  length(l) == 0 && return allowempty
+
   result = false
   for c in l
     c in whitespace && (allow_whitespace ? continue : (result = false; break))
@@ -43,6 +46,10 @@ function next_line_contains_only(io::IO, chars::String; allow_whitespace = true,
   end
   !(result && eat) && seek(io, start)
   return result
+end
+
+function blankline(io::IO)
+  !eof(io) && next_line_contains_only(io, "", allow_whitespace = true, allowempty = true)
 end
 
 """

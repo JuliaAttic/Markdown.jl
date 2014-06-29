@@ -81,10 +81,13 @@ function blockquote(stream::IO, block::Block, config::Config)
   start = position(stream)
   skip_blank_lines(stream)
   buffer = IOBuffer()
-  while starts_with(stream, ">")
+  @label loop
+  while starts_with(stream, "> ") || starts_with(stream, ">")
     write(buffer, readline(stream))
   end
+  blankline(stream) && (println(buffer); @goto loop)
   md = takebuf_string(buffer)
+  println(md)
   if !isempty(md)
     push!(block, BlockQuote(parse(md).content))
     return true
