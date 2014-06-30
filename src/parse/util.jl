@@ -57,7 +57,7 @@ Test if the stream starts with the given string.
 `eat` specifies whether to advance on success (true by default).
 `padding` specifies whether leading whitespace should be ignored.
 """
-function starts_with(stream::IO, s::String; eat = true, padding = false, newlines = true)
+function startswith(stream::IO, s::String; eat = true, padding = false, newlines = true)
   start = position(stream)
   padding && skip_whitespace(stream, newlines = newlines)
   result = true
@@ -69,11 +69,11 @@ function starts_with(stream::IO, s::String; eat = true, padding = false, newline
   return result
 end
 
-function starts_with{T<:String}(stream::IO, ss::Vector{T}; kws...)
-  any(s->starts_with(stream, s; kws...), ss)
+function startswith{T<:String}(stream::IO, ss::Vector{T}; kws...)
+  any(s->startswith(stream, s; kws...), ss)
 end
 
-function starts_with(stream::IO, r::Regex; eat = true, padding = false)
+function startswith(stream::IO, r::Regex; eat = true, padding = false)
   @assert beginswith(r.pattern, "^")
   start = position(stream)
   padding && skip_whitespace(stream)
@@ -93,7 +93,7 @@ function read_until(stream::IO, delimiter::String, newlines = false)
   start = position(stream)
   buffer = IOBuffer()
   while !eof(stream)
-    starts_with(stream, delimiter) && return takebuf_string(buffer)
+    startswith(stream, delimiter) && return takebuf_string(buffer)
     char = read(stream, Char)
     !newlines && char == '\n' && break
     write(buffer, char)
@@ -108,13 +108,13 @@ i.e. `*word word*` but not `*word * word`
 """
 function parse_inline_wrapper(stream::IO, delimiter::String, no_newlines = true)
   start = position(stream)
-  starts_with(stream, delimiter) || return nothing
+  startswith(stream, delimiter) || return nothing
 
   buffer = IOBuffer()
   while !eof(stream)
     char = read(stream, Char)
     no_newlines && char == '\n' && break
-    if !(char in whitespace) && starts_with(stream, delimiter)
+    if !(char in whitespace) && startswith(stream, delimiter)
       write(buffer, char)
       return takebuf_string(buffer)
     end

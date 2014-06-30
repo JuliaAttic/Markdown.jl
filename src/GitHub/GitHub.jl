@@ -1,9 +1,9 @@
 function fenced_code(stream::IO, block::Block, config::Config)
-  starts_with(stream, "```", padding = true) || return false
+  startswith(stream, "```", padding = true) || return false
   readline(stream)
   buffer = IOBuffer()
   while !eof(stream)
-    starts_with(stream, "```") && break
+    startswith(stream, "```") && break
     write(buffer, read(stream, Char))
   end
   push!(block, Code(takebuf_string(buffer) |> chomp))

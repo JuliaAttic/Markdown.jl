@@ -21,7 +21,7 @@ function stop(stream::IO, trigger::Char)
 end
 
 function stop(stream::IO, trigger::String)
-  starts_with(stream, trigger, eat = false)
+  startswith(stream, trigger, eat = false)
 end
 
 function stop(stream::IO, trigger::Function)

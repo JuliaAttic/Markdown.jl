@@ -10,8 +10,8 @@ function paragraph(stream::IO, block::Block, config::Config)
   while !eof(stream)
     char = read(stream, Char)
     if char == '\n' || char == '\r'
-#       char == '\n' && starts_with(stream, "\r")
-      if starts_with(stream, ["\n", "\r"], padding = true, newlines = false) || stop(stream, config.triggers)
+#       char == '\n' && startswith(stream, "\r")
+      if startswith(stream, ["\n", "\r"], padding = true, newlines = false) || stop(stream, config.triggers)
         break
       else
         write(buffer, ' ')
@@ -33,9 +33,9 @@ end
 
 # Currently only supports level = 1
 function hash_header(stream::IO, md::Block, config::Config)
-  starts_with(stream, "#") || return false
+  startswith(stream, "#") || return false
   level = 1
-  while starts_with(stream, "#")
+  while startswith(stream, "#")
     level += 1
   end
   h = readline(stream) |> chomp
@@ -68,7 +68,7 @@ function indented_code(stream::IO, block::Block, config::Config)
   start = position(stream)
   skip_blank_lines(stream)
   buffer = IOBuffer()
-  while starts_with(stream, "    ") || starts_with(stream, "\t")
+  while startswith(stream, "    ") || startswith(stream, "\t")
     write(buffer, readline(stream))
   end
   code = takebuf_string(buffer)
@@ -82,7 +82,7 @@ function blockquote(stream::IO, block::Block, config::Config)
   skip_blank_lines(stream)
   buffer = IOBuffer()
   @label loop
-  while starts_with(stream, "> ") || starts_with(stream, ">")
+  while startswith(stream, "> ") || startswith(stream, ">")
     write(buffer, readline(stream))
   end
   blankline(stream) && @goto loop
@@ -100,14 +100,14 @@ end
 function list(stream::IO, block::Block, config::Config)
   start = position(stream)
   skip_whitespace(stream)
-  starts_with(stream, ["* ", "• "]) || (seek(stream, start); return false)
+  startswith(stream, ["* ", "• "]) || (seek(stream, start); return false)
   the_list = List()
   buffer = IOBuffer()
   fresh_line = false
   while !eof(stream)
     if fresh_line
       skip_whitespace(stream)
-      if starts_with(stream, ["* ", "• "])
+      if startswith(stream, ["* ", "• "])
         push!(the_list, Plain(takebuf_string(buffer)))
         buffer = IOBuffer()
       else
@@ -155,11 +155,11 @@ end
 function image(stream::IO)
   start = position(stream)
   while true
-    starts_with(stream, "![") || break
+    startswith(stream, "![") || break
     alt = read_until(stream, "]")
     alt == nothing && break
     skip_whitespace(stream)
-    starts_with(stream, "(") || break
+    startswith(stream, "(") || break
     url = read_until(stream, ")")
     url == nothing && break
     return Image(url, alt)
@@ -171,11 +171,11 @@ end
 function link(stream::IO)
   start = position(stream)
   while true
-    starts_with(stream, "[") || break
+    startswith(stream, "[") || break
     text = read_until(stream, "]")
     text == nothing && break
     skip_whitespace(stream)
-    starts_with(stream, "(") || break
+    startswith(stream, "(") || break
     url = read_until(stream, ")")
     url == nothing && break
     return Link(text, url)
@@ -187,7 +187,7 @@ end
 # Punctuation
 
 function en_dash(stream::IO)
-  if starts_with(stream, "--")
+  if startswith(stream, "--")
     return Plain("–")
   end
 end
@@ -196,7 +196,7 @@ const escape_chars = "\\`*_#+-.!{}[]()"
 
 function escapes(stream::IO)
   pos = position(stream)
-  if starts_with(stream, "\\") && !eof(stream) && (c = peek(stream)) in escape_chars
+  if startswith(stream, "\\") && !eof(stream) && (c = peek(stream)) in escape_chars
     return Plain(read(stream, Char) |> string)
   end
   seek(stream, pos)
