@@ -85,9 +85,8 @@ function blockquote(stream::IO, block::Block, config::Config)
   while starts_with(stream, "> ") || starts_with(stream, ">")
     write(buffer, readline(stream))
   end
-  blankline(stream) && (println(buffer); @goto loop)
+  blankline(stream) && @goto loop
   md = takebuf_string(buffer)
-  println(md)
   if !isempty(md)
     push!(block, BlockQuote(parse(md).content))
     return true
