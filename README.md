@@ -74,4 +74,4 @@ f(IO)::Content
 
 They should simply either parse successfully and return some content object or return nothing.
 
-This design is very flexible; it is very easy to add new elements (just write a small, testable function and add it to the list), and the composability makes it trivial to support multiple variations on the Markdown spec using the same well-tested components.
+This design is very flexible; it is very easy to add new elements (just write a small, testable function and add it to the list), and the composability makes it trivial to support multiple variations on the Markdown spec using the same well-tested components. This can even be done from outside of Markdown.jl, i.e. without touching or modifying its internals.
