@@ -69,7 +69,7 @@ The `IO` object is the stream to parse, which should either be moved past the pa
 Inline parsers are a little simpler, having the type
 
 ```
-f(IO)::Content
+f(IO)::Union(Content,Nothing)
 ```
 
 They should simply either parse successfully and return some content object or return nothing.
