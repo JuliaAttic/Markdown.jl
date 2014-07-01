@@ -62,7 +62,7 @@ A block parser has the signature
 f(IO, Content, Config)::Bool
 ```
 
-The `IO` object is the stream to parse, which should either be moved pass the parsed object or left alone. The `Content` parameter is the current Markdown tree; this should be modified as appropriate. The `Config` is the current flavour, represented as above. The return value basically indicates whether or not the parser found anything; more precisely, it indicates to Markdown.jl whether to continue on to the next parser on the stack (`false`) or start again from the top (`true`).
+The `IO` object is the stream to parse, which should either be moved past the parsed object or left alone. The `Content` parameter is the current Markdown tree; this should be modified as appropriate. The `Config` is the current flavour, represented as above. The return value basically indicates whether or not the parser found anything; more precisely, it indicates to Markdown.jl whether to continue on to the next parser on the stack (`false`) or start again from the top (`true`).
 
 #### Inline Parsers
 
