@@ -35,7 +35,7 @@ Each Markdown flavour is specified declaratively by simply listing the features 
 [en_dash, inline_code, asterisk_bold, asterisk_italic, image, link]
 ```
 
-These are simply functions which share a common interface, called *parsers* – block parsers and inline parsers repectively. Markdown.jl parses markdown files by calling each parser in sequence until one indicates that it has parsed the file successfully, at which point it returns to the top of the stack and starts again. `paragraph` acts as a catch-all parser, so it will usually be at the end of the stack.
+These are simply functions which share a common interface, called *parsers* – block parsers and inline parsers repectively. Markdown.jl parses markdown files by calling each parser in sequence until one indicates that it has parsed something successfully, at which point it returns to the top of the stack and starts again. `paragraph` acts as a catch-all parser, so it will usually be at the end of the stack.
 
 More precisely, the Julia doc flavour is specified as:
 
