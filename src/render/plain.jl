@@ -49,9 +49,3 @@ print_inline(io::IO, md::Bold) = print(io, "**", md.text, "**")
 print_inline(io::IO, md::Italic) = print(io, "*", md.text, "*")
 
 print_inline(io::IO, md::InlineCode) = print(io, "`", md.code, "`")
-
-function print_inline(io::IO, md::BlockCode)
-  for line in split(md.code, "\n")
-    println(io, "    ", line)
-  end
-end

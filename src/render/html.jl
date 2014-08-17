@@ -70,7 +70,7 @@ function writemime(io::IO, ::MIME"text/html", md::Plain)
 end
 
 function writemime(io::IO, ::MIME"text/html", md::Bold)
-  with_tag(io, "b") do
+  with_tag(io, "strong") do
     print(io, md.text)
   end
 end
