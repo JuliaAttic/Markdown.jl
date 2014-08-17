@@ -49,13 +49,17 @@ end
 Header(s::String, level::Int) = Header{level}(s)
 Header(s::String) = Header(s, 1)
 
-type Code <: Content
+type InlineCode <: Content
+  code::UTF8String
+end
+
+type BlockCode <: Content
   language::UTF8String
   code::UTF8String
   line::Int
 end
 
-Code(code) = Code("", code, 0)
+BlockCode(code) = BlockCode("", code, 0)
 
 type Plain <: Content
   text::UTF8String

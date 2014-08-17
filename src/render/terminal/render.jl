@@ -65,7 +65,7 @@ function terminal_print{l}(io::IO, md::Header{l}; columns = nothing)
   println(io, "#"^l, " ", md.text, "\n")
 end
 
-function terminal_print(io::IO, md::Code; columns = nothing)
+function terminal_print(io::IO, md::Union(InlineCode, BlockCode); columns = nothing)
   if columns == nothing
     print_with_format(:cyan, io, md.code)
   else
