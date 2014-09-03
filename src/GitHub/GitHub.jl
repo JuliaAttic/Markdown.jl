@@ -6,7 +6,7 @@ function fenced_code(stream::IO, block::Block, config::Config)
     startswith(stream, "```") && break
     write(buffer, read(stream, Char))
   end
-  push!(block, Code(takebuf_string(buffer) |> chomp))
+  push!(block, BlockCode(takebuf_string(buffer) |> chomp))
   return true
 end
 

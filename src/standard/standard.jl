@@ -72,7 +72,7 @@ function indented_code(stream::IO, block::Block, config::Config)
     write(buffer, readline(stream))
   end
   code = takebuf_string(buffer)
-  !isempty(code) && (push!(block, Code(chomp(code))); return true)
+  !isempty(code) && (push!(block, BlockCode(chomp(code))); return true)
   seek(stream, start)
   return false
 end
@@ -149,7 +149,7 @@ end
 
 function inline_code(stream::IO)
   result = parse_inline_wrapper(stream, "`")
-  return result == nothing ? nothing : Code(result)
+  return result == nothing ? nothing : InlineCode(result)
 end
 
 function image(stream::IO)

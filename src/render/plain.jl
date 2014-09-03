@@ -48,6 +48,4 @@ print_inline(io::IO, md::Bold) = print(io, "**", md.text, "**")
 
 print_inline(io::IO, md::Italic) = print(io, "*", md.text, "*")
 
-print_inline(io::IO, md::Code) = print(io, "`", md.code, "`")
-
-
+print_inline(io::IO, md::InlineCode) = print(io, "`", md.code, "`")

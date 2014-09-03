@@ -25,12 +25,17 @@ function writemime{l}(io::IO, mime::MIME"text/html", header::Header{l})
   end
 end
 
-function writemime(io::IO, ::MIME"text/html", code::Code)
-  with_tag(io, "code") do
-    println(io)
-    for line in split(code.code, "\n")
-      println(io, line)
+function writemime(io::IO, ::MIME"text/html", code::BlockCode)
+  with_tag(io, "pre") do
+    with_tag(io, "code") do
+      print(io, code.code)
     end
+  end
+end
+
+function writemime(io::IO, ::MIME"text/html", code::InlineCode)
+  with_tag(io, "code") do
+    print(io, code.code)
   end
 end
 
@@ -65,7 +70,7 @@ function writemime(io::IO, ::MIME"text/html", md::Plain)
 end
 
 function writemime(io::IO, ::MIME"text/html", md::Bold)
-  with_tag(io, "bold") do
+  with_tag(io, "strong") do
     print(io, md.text)
   end
 end
