@@ -10,6 +10,7 @@ include("doc/doc.jl")
 
 include("render/plain.jl")
 include("render/html.jl")
+include("render/latex.jl")
 
 include("render/terminal/render.jl")
 
