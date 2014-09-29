@@ -48,6 +48,7 @@ function html(io::IO, md::List)
     for item in md.items
       withtag(io, :li) do
         htmlinline(io, item)
+        println(io)
       end
     end
   end
