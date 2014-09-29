@@ -71,6 +71,15 @@ function startswith(stream::IO, s::String; eat = true, padding = false, newlines
   return result
 end
 
+function startswith(stream::IO, c::Char; eat = true)
+  if peek(stream) == c
+    eat && read(stream, Char)
+    return true
+  else
+    return false
+  end
+end
+
 function startswith{T<:String}(stream::IO, ss::Vector{T}; kws...)
   any(s->startswith(stream, s; kws...), ss)
 end
