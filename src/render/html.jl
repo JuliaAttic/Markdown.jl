@@ -11,7 +11,7 @@ end
 writemime(io::IO, ::MIME"text/html", md::Content) =
   writemime(io, "text/plain", md)
 
-function writemime(io::IO, mime::MIME"text/html", block::Block)
+function writemime(io::IO, mime::MIME"text/html", block::MD)
   for md in block.content[1:end-1]
     writemime(io::IO, mime, md)
     println(io)
@@ -25,7 +25,7 @@ function writemime{l}(io::IO, mime::MIME"text/html", header::Header{l})
   end
 end
 
-function writemime(io::IO, ::MIME"text/html", code::BlockCode)
+function writemime(io::IO, ::MIME"text/html", code::Code)
   with_tag(io, "pre") do
     with_tag(io, "code") do
       print(io, code.code)
@@ -49,7 +49,7 @@ end
 
 function writemime(io::IO, ::MIME"text/html", md::BlockQuote)
   with_tag(io, "blockquote") do
-    writemime(io, "text/html", Block(md.content))
+    writemime(io, "text/html", MD(md.content))
   end
 end
 

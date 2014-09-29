@@ -7,15 +7,15 @@ include("standard/standard.jl")
 # include("doc/doc.jl")
 
 # include("render/plain.jl")
-# include("render/html.jl")
+include("render/html.jl")
 # include("render/latex.jl")
 
 # include("render/terminal/render.jl")
 
+export readme, license
+
 parse(markdown::String; flavour = julia) = parse(IOBuffer(markdown), flavour = flavour)
 parse_file(file::String; flavour = julia) = parse(readall(file), flavour = flavour)
-
-export readme, license
 
 readme(pkg::String; flavour = julia) = parse_file(Pkg.dir(pkg, "README.md"), flavour = flavour)
 readme(pkg::Module; flavour = julia) = readme(string(pkg), flavour = flavour)
