@@ -22,15 +22,15 @@ function html{l}(io::IO, header::Header{l})
 end
 
 function html(io::IO, code::Code)
-  withtag(io, "pre") do
-    withtag(io, "code") do
+  withtag(io, :pre) do
+    withtag(io, :code) do
       print(io, code.code)
     end
   end
 end
 
 function html(io::IO, md::Paragraph)
-  withtag(io, "p") do
+  withtag(io, :p) do
     for md in md.content
       htmlinline(io, md)
     end
@@ -38,7 +38,7 @@ function html(io::IO, md::Paragraph)
 end
 
 function html(io::IO, md::BlockQuote)
-  withtag(io, "blockquote") do
+  withtag(io, :blockquote) do
     for md in block.content
       html(io::IO, md)
       println(io)
@@ -47,9 +47,9 @@ function html(io::IO, md::BlockQuote)
 end
 
 function html(io::IO, md::List)
-  withtag(io, "ul") do
+  withtag(io, :ul) do
     for item in md.content
-      withtag(io, "li") do
+      withtag(io, :li) do
         htmlinline(io, item)
       end
     end
@@ -59,7 +59,7 @@ end
 # Inline elements
 
 function htmlinline(io::IO, code::InlineCode)
-  withtag(io, "code") do
+  withtag(io, :code) do
     print(io, code.code)
   end
 end
@@ -69,13 +69,13 @@ function htmlinline(io::IO, md::Plain)
 end
 
 function htmlinline(io::IO, md::Bold)
-  withtag(io, "strong") do
+  withtag(io, :strong) do
     print(io, md.text)
   end
 end
 
 function htmlinline(io::IO, md::Italic)
-  withtag(io, "em") do
+  withtag(io, :em) do
     print(io, md.text)
   end
 end
