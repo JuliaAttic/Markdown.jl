@@ -97,20 +97,32 @@ function startswith(stream::IO, r::Regex; eat = true, padding = false)
 end
 
 """
-Read the stream until the delimiter is met.
+Executes the block of code, and if the return value is `nothing`,
+returns the stream to its initial position.
+"""
+function withstream(f, stream)
+  pos = position(stream)
+  result = f()
+  result ≡ nothing && seek(stream, pos)
+  return result
+end
+
+"""
+Read the stream until startswith(stream, delim)
 The delimiter is consumed but not included.
+Returns nothing and resets the stream if delim is
+not found.
 """
 function readuntil(stream::IO, delimiter::String, newlines = false)
-  start = position(stream)
-  buffer = IOBuffer()
-  while !eof(stream)
-    startswith(stream, delimiter) && return takebuf_string(buffer)
-    char = read(stream, Char)
-    !newlines && char == '\n' && break
-    write(buffer, char)
+  withstream(stream) do
+    buffer = IOBuffer()
+    while !eof(stream)
+      startswith(stream, delimiter) && return takebuf_string(buffer)
+      char = read(stream, Char)
+      !newlines && char == '\n' && break
+      write(buffer, char)
+    end
   end
-  seek(stream, start)
-  return nothing
 end
 
 """
@@ -118,25 +130,23 @@ Parse a symmetrical delimiter which wraps words.
 i.e. `*word word*` but not `*word * word`
 """
 function parse_inline_wrapper(stream::IO, delimiter::String, no_newlines = true)
-  start = position(stream)
-  startswith(stream, delimiter) || return nothing
+  withstream(stream) do
+    startswith(stream, delimiter) || return nothing
 
-  buffer = IOBuffer()
-  while !eof(stream)
-    char = read(stream, Char)
-    no_newlines && char == '\n' && break
-    if !(char in whitespace) && startswith(stream, delimiter)
+    buffer = IOBuffer()
+    while !eof(stream)
+      char = read(stream, Char)
+      no_newlines && char == '\n' && break
+      if !(char in whitespace) && startswith(stream, delimiter)
+        write(buffer, char)
+        return takebuf_string(buffer)
+      end
       write(buffer, char)
-      return takebuf_string(buffer)
     end
-    write(buffer, char)
   end
-
-  seek(stream, start)
-  return nothing
 end
 
-function show_rest(io::IO)
+function showrest(io::IO)
   start = position(io)
   show(readall(io))
   seek(io, start)
