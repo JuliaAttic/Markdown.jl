@@ -1,42 +1,38 @@
-abstract Content
-
-# Forward some array methods
-
-Base.push!(md::Content, x) = push!(md.content, x)
-Base.getindex(md::Content, args...) = md.content[args...]
-Base.setindex!(md::Content, args...) = setindex!(md.content, args...)
-Base.endof(md::Content) = endof(md.content)
-Base.length(md::Content) = length(md.content)
-Base.isempty(md::Content) = isempty(md.content)
-
-typealias Cell Vector{Any}
-
-type MD <: Content
-  content::Cell
+type MD
+  content::Vector{Any}
 
   MD(x::AbstractVector) = new(x)
 end
 
 MD(xs...) = MD([xs...])
 
-type Paragraph <: Content
-  content::Cell
+# Forward some array methods
 
-  Paragraph(x::AbstractVector) = new(x)
+Base.push!(md::MD, x) = push!(md.content, x)
+Base.getindex(md::MD, args...) = md.content[args...]
+Base.setindex!(md::MD, args...) = setindex!(md.content, args...)
+Base.endof(md::MD) = endof(md.content)
+Base.length(md::MD) = length(md.content)
+Base.isempty(md::MD) = isempty(md.content)
+
+type Paragraph
+  content
+
+  Paragraph(x) = new(x)
 end
 
 Paragraph(xs...) = Paragraph([xs...])
 
-type BlockQuote <: Content
-  content::Cell
+type BlockQuote
+  content
 
-  BlockQuote(x::AbstractVector) = new(x)
+  BlockQuote(x) = new(x)
 end
 
 BlockQuote(xs...) = BlockQuote([xs...])
 
-type List <: Content
-  content::Cell
+type List
+  items::Vector{Any}
   ordered::Bool
 
   List(x::AbstractVector) = new(x)
@@ -44,42 +40,34 @@ end
 
 List(xs...) = List([xs...])
 
-type Header{level} <: Content
-  text::UTF8String
+type Header{level}
+  content
 end
 
-Header(s::String, level::Int) = Header{level}(s)
-Header(s::String) = Header(s, 1)
+Header(s, level::Int) = Header{level}(s)
+Header(s) = Header(s, 1)
 
-type InlineCode <: Content
-  code::UTF8String
-end
-
-type Code <: Content
+type Code
   language::UTF8String
   code::UTF8String
 end
 
-BlockCode(code) = BlockCode("", code)
+Code(code) = Code("", code)
 
-type Plain <: Content
+type Bold
   text::UTF8String
 end
 
-type Bold <: Content
+type Italic
   text::UTF8String
 end
 
-type Italic <: Content
-  text::UTF8String
-end
-
-type Link <: Content
-  text::UTF8String
+type Link
+  content
   url::UTF8String
 end
 
-type Image <: Content
+type Image
   url::UTF8String
   alt::UTF8String
 end

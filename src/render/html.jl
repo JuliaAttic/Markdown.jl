@@ -8,16 +8,18 @@ end
 
 # Block elements
 
-function html(io::IO, block::MD)
-  for md in block.content
+function html(io::IO, content::Vector)
+  for md in content
     html(io::IO, md)
     println(io)
   end
 end
 
+html(io::IO, md::MD) = html(io, md.content)
+
 function html{l}(io::IO, header::Header{l})
   withtag(io, "h$l") do
-    print(io, header.text)
+    print(io, header.content)
   end
 end
 
@@ -31,24 +33,19 @@ end
 
 function html(io::IO, md::Paragraph)
   withtag(io, :p) do
-    for md in md.content
-      htmlinline(io, md)
-    end
+    htmlinline(io, md.content)
   end
 end
 
 function html(io::IO, md::BlockQuote)
   withtag(io, :blockquote) do
-    for md in block.content
-      html(io::IO, md)
-      println(io)
-    end
+    html(io, block.content)
   end
 end
 
 function html(io::IO, md::List)
   withtag(io, :ul) do
-    for item in md.content
+    for item in md.items
       withtag(io, :li) do
         htmlinline(io, item)
       end
@@ -58,14 +55,20 @@ end
 
 # Inline elements
 
-function htmlinline(io::IO, code::InlineCode)
+function htmlinline(io::IO, content::Vector)
+  for x in content
+    htmlinline(io, x)
+  end
+end
+
+function htmlinline(io::IO, code::Code)
   withtag(io, :code) do
     print(io, code.code)
   end
 end
 
-function htmlinline(io::IO, md::Plain)
-  print(io, md.text)
+function htmlinline(io::IO, md::String)
+  print(io, md)
 end
 
 function htmlinline(io::IO, md::Bold)

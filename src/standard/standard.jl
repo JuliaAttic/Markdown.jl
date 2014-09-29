@@ -4,7 +4,7 @@
 function paragraph(stream::IO, block::MD, config::Config)
   skip_blank_lines(stream) > 0 && return true
   buffer = IOBuffer()
-  md = Paragraph()
+  md = Paragraph({})
   push!(block, md)
   skip_whitespace(stream)
   while !eof(stream)
@@ -19,15 +19,15 @@ function paragraph(stream::IO, block::MD, config::Config)
     else
       if char in config.inner.triggers &&
           (inner = parseinline(stream, config, offset = -1)) != nothing
-        push!(md, Plain(takebuf_string(buffer)))
+        push!(md.content, takebuf_string(buffer))
         buffer = IOBuffer()
-        push!(md, inner)
+        push!(md.content, inner)
       else
         write(buffer, char)
       end
     end
   end
-  push!(md.content, Plain(takebuf_string(buffer)))
+  push!(md.content, takebuf_string(buffer))
   return true
 end
 
@@ -50,7 +50,7 @@ end
 
 function has_plain_last(md::MD)
   return !isempty(md) && isa(md[end], Paragraph) &&
-    !isempty(md[end]) && isa(md[end][1], Plain)
+    !isempty(md[end].content) && isa(md[end].content[1], String)
 end
 
 function underline_header(stream::IO, md::MD, config::Config)
@@ -108,7 +108,7 @@ function list(stream::IO, block::MD, config::Config)
     if fresh_line
       skip_whitespace(stream)
       if startswith(stream, ["* ", "• "])
-        push!(the_list, Plain(takebuf_string(buffer)))
+        push!(the_list.items, takebuf_string(buffer))
         buffer = IOBuffer()
       else
         write(buffer, ' ')
@@ -129,7 +129,7 @@ function list(stream::IO, block::MD, config::Config)
       end
     end
   end
-  push!(the_list, Plain(takebuf_string(buffer)))
+  push!(the_list.items, takebuf_string(buffer))
   push!(block, the_list)
   return true
 end
@@ -149,7 +149,7 @@ end
 
 function inline_code(stream::IO)
   result = parse_inline_wrapper(stream, "`")
-  return result == nothing ? nothing : InlineCode(result)
+  return result == nothing ? nothing : Code(result)
 end
 
 function image(stream::IO)
@@ -188,7 +188,7 @@ end
 
 function en_dash(stream::IO)
   if startswith(stream, "--")
-    return Plain("–")
+    return "–"
   end
 end
 
@@ -197,7 +197,7 @@ const escape_chars = "\\`*_#+-.!{}[]()"
 function escapes(stream::IO)
   pos = position(stream)
   if startswith(stream, "\\") && !eof(stream) && (c = peek(stream)) in escape_chars
-    return Plain(read(stream, Char) |> string)
+    return read(stream, Char) |> string
   end
   seek(stream, pos)
   return
