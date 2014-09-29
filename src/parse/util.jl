@@ -7,7 +7,7 @@ const whitespace = " \t\r"
 """
 Skip any leading whitespace. Returns io.
 """
-function skip_whitespace(io::IO; newlines = true)
+function skipwhitespace(io::IO; newlines = true)
   while !eof(io) && (peek(io) in whitespace || (newlines && peek(io) == '\n'))
     read(io, Char)
   end
@@ -61,7 +61,7 @@ Test if the stream starts with the given string.
 """
 function startswith(stream::IO, s::String; eat = true, padding = false, newlines = true)
   start = position(stream)
-  padding && skip_whitespace(stream, newlines = newlines)
+  padding && skipwhitespace(stream, newlines = newlines)
   result = true
   for char in s
     !eof(stream) && read(stream, Char) == char ||
@@ -78,7 +78,7 @@ end
 function startswith(stream::IO, r::Regex; eat = true, padding = false)
   @assert beginswith(r.pattern, "^")
   start = position(stream)
-  padding && skip_whitespace(stream)
+  padding && skipwhitespace(stream)
   line = chomp(readline(stream))
   seek(stream, start)
   m = match(r, line)

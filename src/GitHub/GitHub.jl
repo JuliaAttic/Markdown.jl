@@ -14,7 +14,7 @@ function github_paragraph(stream::IO, block::MD, config::Config)
   buffer = IOBuffer()
   md = Paragraph()
   push!(block, md)
-  skip_whitespace(stream)
+  skipwhitespace(stream)
   while !eof(stream)
     char = read(stream, Char)
     if char == '\n'

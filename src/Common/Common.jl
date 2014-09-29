@@ -6,7 +6,7 @@ function paragraph(stream::IO, block::MD, config::Config)
   buffer = IOBuffer()
   md = Paragraph()
   push!(block, md)
-  skip_whitespace(stream)
+  skipwhitespace(stream)
   while !eof(stream)
     char = read(stream, Char)
     if char == '\n' || char == '\r'
@@ -99,14 +99,14 @@ end
 # Todo: ordered lists, inline formatting
 function list(stream::IO, block::MD, config::Config)
   start = position(stream)
-  skip_whitespace(stream)
+  skipwhitespace(stream)
   startswith(stream, ["* ", "• "]) || (seek(stream, start); return false)
   the_list = List()
   buffer = IOBuffer()
   fresh_line = false
   while !eof(stream)
     if fresh_line
-      skip_whitespace(stream)
+      skipwhitespace(stream)
       if startswith(stream, ["* ", "• "])
         push!(the_list.items, takebuf_string(buffer))
         buffer = IOBuffer()
@@ -158,7 +158,7 @@ function image(stream::IO)
     startswith(stream, "![") || break
     alt = read_until(stream, "]")
     alt == nothing && break
-    skip_whitespace(stream)
+    skipwhitespace(stream)
     startswith(stream, "(") || break
     url = read_until(stream, ")")
     url == nothing && break
@@ -174,7 +174,7 @@ function link(stream::IO)
     startswith(stream, "[") || break
     text = read_until(stream, "]")
     text == nothing && break
-    skip_whitespace(stream)
+    skipwhitespace(stream)
     startswith(stream, "(") || break
     url = read_until(stream, ")")
     url == nothing && break
