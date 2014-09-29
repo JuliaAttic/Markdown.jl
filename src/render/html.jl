@@ -2,7 +2,7 @@ import Base.writemime
 
 export html
 
-function with_tag(f, io, tag)
+function withtag(f, io, tag)
   print(io, "<$tag>")
   f()
   print(io, "</$tag>")
@@ -20,27 +20,27 @@ function writemime(io::IO, mime::MIME"text/html", block::MD)
 end
 
 function writemime{l}(io::IO, mime::MIME"text/html", header::Header{l})
-  with_tag(io, "h$l") do
+  withtag(io, "h$l") do
     print(io, header.text)
   end
 end
 
 function writemime(io::IO, ::MIME"text/html", code::Code)
-  with_tag(io, "pre") do
-    with_tag(io, "code") do
+  withtag(io, "pre") do
+    withtag(io, "code") do
       print(io, code.code)
     end
   end
 end
 
 function writemime(io::IO, ::MIME"text/html", code::InlineCode)
-  with_tag(io, "code") do
+  withtag(io, "code") do
     print(io, code.code)
   end
 end
 
 function writemime(io::IO, ::MIME"text/html", md::Paragraph)
-  with_tag(io, "p") do
+  withtag(io, "p") do
     for md in md.content
       html_inline(io, md)
     end
@@ -48,15 +48,15 @@ function writemime(io::IO, ::MIME"text/html", md::Paragraph)
 end
 
 function writemime(io::IO, ::MIME"text/html", md::BlockQuote)
-  with_tag(io, "blockquote") do
+  withtag(io, "blockquote") do
     writemime(io, "text/html", MD(md.content))
   end
 end
 
 function writemime(io::IO, ::MIME"text/html", md::List)
-  with_tag(io, "ul") do
+  withtag(io, "ul") do
     for item in md.content
-      with_tag(io, "li") do
+      withtag(io, "li") do
         html_inline(io, item)
       end
     end
@@ -70,13 +70,13 @@ function writemime(io::IO, ::MIME"text/html", md::Plain)
 end
 
 function writemime(io::IO, ::MIME"text/html", md::Bold)
-  with_tag(io, "strong") do
+  withtag(io, "strong") do
     print(io, md.text)
   end
 end
 
 function writemime(io::IO, ::MIME"text/html", md::Italic)
-  with_tag(io, "em") do
+  withtag(io, "em") do
     print(io, md.text)
   end
 end
