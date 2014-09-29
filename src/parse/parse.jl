@@ -43,7 +43,7 @@ Inner parsers:
   return – element to use or nothing
 """
 
-function parse_inner(stream::IO, parsers::Vector{Function}; offset = 0)
+function parseinline(stream::IO, parsers::Vector{Function}; offset = 0)
   skip(stream, offset)
   for parser in parsers
     inner = parser(stream)
@@ -53,8 +53,8 @@ function parse_inner(stream::IO, parsers::Vector{Function}; offset = 0)
   return nothing
 end
 
-parse_inner(stream::IO, config::Config; offset = 0) =
-  parse_inner(stream, config.inner.parsers; offset=offset)
+parseinline(stream::IO, config::Config; offset = 0) =
+  parseinline(stream, config.inner.parsers; offset=offset)
 
 function parse(stream::IO, block::MD, config::Config)
   eof(stream) && return false

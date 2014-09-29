@@ -18,7 +18,7 @@ function paragraph(stream::IO, block::MD, config::Config)
       end
     else
       if char in config.inner.triggers &&
-          (inner = parse_inner(stream, config, offset = -1)) != nothing
+          (inner = parseinline(stream, config, offset = -1)) != nothing
         push!(md, Plain(takebuf_string(buffer)))
         buffer = IOBuffer()
         push!(md, inner)
