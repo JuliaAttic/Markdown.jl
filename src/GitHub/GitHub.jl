@@ -1,4 +1,4 @@
-function fenced_code(stream::IO, block::Block, config::Config)
+function fenced_code(stream::IO, block::MD, config::Config)
   startswith(stream, "```", padding = true) || return false
   readline(stream)
   buffer = IOBuffer()
@@ -6,11 +6,11 @@ function fenced_code(stream::IO, block::Block, config::Config)
     startswith(stream, "```") && break
     write(buffer, read(stream, Char))
   end
-  push!(block, BlockCode(takebuf_string(buffer) |> chomp))
+  push!(block, Code(takebuf_string(buffer) |> chomp))
   return true
 end
 
-function github_paragraph(stream::IO, block::Block, config::Config)
+function github_paragraph(stream::IO, block::MD, config::Config)
   buffer = IOBuffer()
   md = Paragraph()
   push!(block, md)
@@ -28,17 +28,19 @@ function github_paragraph(stream::IO, block::Block, config::Config)
     else
       if char in config.inner.triggers &&
           (inner = parseinline(stream, config, offset = -1)) != nothing
-        push!(md, Plain(takebuf_string(buffer)))
+        push!(md.content, takebuf_string(buffer))
         buffer = IOBuffer()
-        push!(md, inner)
+        push!(md.content, inner)
       else
         write(buffer, char)
       end
     end
   end
-  push!(md.content, Plain(takebuf_string(buffer)))
+  push!(md.content, takebuf_string(buffer))
   return true
 end
+
+# TODO: tables
 
 github = Config(
   # Block elements

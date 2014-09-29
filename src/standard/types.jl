@@ -21,6 +21,7 @@ type Paragraph
   Paragraph(x) = new(x)
 end
 
+Paragraph() = Paragraph({})
 Paragraph(xs...) = Paragraph([xs...])
 
 type BlockQuote

@@ -3,8 +3,8 @@ module Markdown
 include("standard/types.jl")
 include("parse/parse.jl")
 include("standard/standard.jl")
-# include("GitHub/GitHub.jl")
-# include("doc/doc.jl")
+include("GitHub/GitHub.jl")
+include("doc/doc.jl")
 
 # include("render/plain.jl")
 include("render/html.jl")

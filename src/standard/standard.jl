@@ -4,7 +4,7 @@
 function paragraph(stream::IO, block::MD, config::Config)
   skip_blank_lines(stream) > 0 && return true
   buffer = IOBuffer()
-  md = Paragraph({})
+  md = Paragraph()
   push!(block, md)
   skip_whitespace(stream)
   while !eof(stream)
