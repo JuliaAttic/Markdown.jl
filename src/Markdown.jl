@@ -5,14 +5,14 @@ using Lazy
 include("standard/types.jl")
 include("parse/parse.jl")
 include("standard/standard.jl")
-include("GitHub/GitHub.jl")
-include("doc/doc.jl")
+# include("GitHub/GitHub.jl")
+# include("doc/doc.jl")
 
-include("render/plain.jl")
-include("render/html.jl")
-include("render/latex.jl")
+# include("render/plain.jl")
+# include("render/html.jl")
+# include("render/latex.jl")
 
-include("render/terminal/render.jl")
+# include("render/terminal/render.jl")
 
 parse(markdown::String; flavour = julia) = parse(IOBuffer(markdown), flavour = flavour)
 parse_file(file::String; flavour = julia) = parse(readall(file), flavour = flavour)
