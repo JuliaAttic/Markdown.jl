@@ -2,7 +2,7 @@
 # ––––––––––––––
 
 function paragraph(stream::IO, block::MD, config::Config)
-  skip_blank_lines(stream) > 0 && return true
+  skipblank(stream) > 0 && return true
   buffer = IOBuffer()
   md = Paragraph()
   push!(block, md)
@@ -66,7 +66,7 @@ underline_header_trigger(stream::IO) = next_line_contains_only(stream, "=")
 
 function indented_code(stream::IO, block::MD, config::Config)
   start = position(stream)
-  skip_blank_lines(stream)
+  skipblank(stream)
   buffer = IOBuffer()
   while startswith(stream, "    ") || startswith(stream, "\t")
     write(buffer, readline(stream))
@@ -79,7 +79,7 @@ end
 
 function blockquote(stream::IO, block::MD, config::Config)
   start = position(stream)
-  skip_blank_lines(stream)
+  skipblank(stream)
   buffer = IOBuffer()
   @label loop
   while startswith(stream, "> ") || startswith(stream, ">")

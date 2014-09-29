@@ -17,7 +17,7 @@ end
 """
 Skip any leading blank lines. Returns the number skipped.
 """
-function skip_blank_lines(io::IO)
+function skipblank(io::IO)
   start = position(io)
   i = 0
   while !eof(io)
