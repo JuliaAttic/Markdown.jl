@@ -1,10 +1,10 @@
 module Markdown
 
-include("standard/types.jl")
+include("Common/types.jl")
 include("parse/parse.jl")
-include("standard/standard.jl")
+include("Common/Common.jl")
 include("GitHub/GitHub.jl")
-include("doc/doc.jl")
+include("Julia/Julia.jl")
 
 # include("render/plain.jl")
 include("render/html.jl")
