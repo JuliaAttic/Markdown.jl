@@ -1,4 +1,4 @@
-export html
+# Utils
 
 function withtag(f, io, tag)
   print(io, "<$tag>")
@@ -26,12 +26,6 @@ function html(io::IO, code::Code)
     withtag(io, "code") do
       print(io, code.code)
     end
-  end
-end
-
-function html(io::IO, code::InlineCode)
-  withtag(io, "code") do
-    print(io, code.code)
   end
 end
 
@@ -64,31 +58,39 @@ end
 
 # Inline elements
 
-function html(io::IO, md::Plain)
+function htmlinline(io::IO, code::InlineCode)
+  withtag(io, "code") do
+    print(io, code.code)
+  end
+end
+
+function htmlinline(io::IO, md::Plain)
   print(io, md.text)
 end
 
-function html(io::IO, md::Bold)
+function htmlinline(io::IO, md::Bold)
   withtag(io, "strong") do
     print(io, md.text)
   end
 end
 
-function html(io::IO, md::Italic)
+function htmlinline(io::IO, md::Italic)
   withtag(io, "em") do
     print(io, md.text)
   end
 end
 
-function html(io::IO, md::Image)
+function htmlinline(io::IO, md::Image)
   print(io, """<img src="$(md.url)" alt="$(md.alt)"></img>""")
 end
 
-function html(io::IO, md::Link)
+function htmlinline(io::IO, md::Link)
   print(io, """<a href="$(md.url)">$(md.text)</a>""")
 end
 
-htmlinline(io::IO, el::Content) = html(io, el)
+# API
+
+export html
 
 html(md) = sprint(html, md)
 
