@@ -9,16 +9,18 @@ Base.endof(md::Content) = endof(md.content)
 Base.length(md::Content) = length(md.content)
 Base.isempty(md::Content) = isempty(md.content)
 
-type Block <: Content
-  content::Vector{Content}
+typealias Cell Vector{Any}
 
-  Block(x::AbstractVector) = new(x)
+type MD <: Content
+  content::Cell
+
+  MD(x::AbstractVector) = new(x)
 end
 
-Block(xs...) = Block([xs...])
+MD(xs...) = MD([xs...])
 
 type Paragraph <: Content
-  content::Vector{Content}
+  content::Cell
 
   Paragraph(x::AbstractVector) = new(x)
 end
@@ -26,7 +28,7 @@ end
 Paragraph(xs...) = Paragraph([xs...])
 
 type BlockQuote <: Content
-  content::Vector{Content}
+  content::Cell
 
   BlockQuote(x::AbstractVector) = new(x)
 end
@@ -34,7 +36,7 @@ end
 BlockQuote(xs...) = BlockQuote([xs...])
 
 type List <: Content
-  content::Vector{Content}
+  content::Cell
   ordered::Bool
 
   List(x::AbstractVector) = new(x)
@@ -53,13 +55,12 @@ type InlineCode <: Content
   code::UTF8String
 end
 
-type BlockCode <: Content
+type Code <: Content
   language::UTF8String
   code::UTF8String
-  line::Int
 end
 
-BlockCode(code) = BlockCode("", code, 0)
+BlockCode(code) = BlockCode("", code)
 
 type Plain <: Content
   text::UTF8String

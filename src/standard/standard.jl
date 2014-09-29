@@ -1,7 +1,7 @@
 # Block elements
 # ––––––––––––––
 
-function paragraph(stream::IO, block::Block, config::Config)
+function paragraph(stream::IO, block::MD, config::Config)
   skip_blank_lines(stream) > 0 && return true
   buffer = IOBuffer()
   md = Paragraph()
@@ -32,7 +32,7 @@ function paragraph(stream::IO, block::Block, config::Config)
 end
 
 # Currently only supports level = 1
-function hash_header(stream::IO, md::Block, config::Config)
+function hash_header(stream::IO, md::MD, config::Config)
   startswith(stream, "#") || return false
   level = 1
   while startswith(stream, "#")
@@ -48,12 +48,12 @@ function hash_header(stream::IO, md::Block, config::Config)
   end
 end
 
-function has_plain_last(md::Block)
+function has_plain_last(md::MD)
   return !isempty(md) && isa(md[end], Paragraph) &&
     !isempty(md[end]) && isa(md[end][1], Plain)
 end
 
-function underline_header(stream::IO, md::Block, config::Config)
+function underline_header(stream::IO, md::MD, config::Config)
   if has_plain_last(md) && next_line_contains_only(stream, whitespace*"=", eat = true)
     md[end] = Header(md[end][1].text)
     return true
@@ -64,7 +64,7 @@ end
 
 underline_header_trigger(stream::IO) = next_line_contains_only(stream, "=")
 
-function indented_code(stream::IO, block::Block, config::Config)
+function indented_code(stream::IO, block::MD, config::Config)
   start = position(stream)
   skip_blank_lines(stream)
   buffer = IOBuffer()
@@ -77,7 +77,7 @@ function indented_code(stream::IO, block::Block, config::Config)
   return false
 end
 
-function blockquote(stream::IO, block::Block, config::Config)
+function blockquote(stream::IO, block::MD, config::Config)
   start = position(stream)
   skip_blank_lines(stream)
   buffer = IOBuffer()
@@ -97,7 +97,7 @@ function blockquote(stream::IO, block::Block, config::Config)
 end
 
 # Todo: ordered lists, inline formatting
-function list(stream::IO, block::Block, config::Config)
+function list(stream::IO, block::MD, config::Config)
   start = position(stream)
   skip_whitespace(stream)
   startswith(stream, ["* ", "• "]) || (seek(stream, start); return false)

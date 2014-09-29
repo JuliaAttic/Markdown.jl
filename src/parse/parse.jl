@@ -56,7 +56,7 @@ end
 parse_inner(stream::IO, config::Config; offset = 0) =
   parse_inner(stream, config.inner.parsers; offset=offset)
 
-function parse(stream::IO, block::Block, config::Config)
+function parse(stream::IO, block::MD, config::Config)
   eof(stream) && return false
   for parser in config.parsers
     parser(stream, block, config) && return true
@@ -68,7 +68,7 @@ const flavours = Dict{Symbol, Config}()
 
 function parse(stream::IO; flavour = julia)
   isa(flavour, Symbol) && (flavour = flavours[flavour])
-  markdown = Block()
+  markdown = MD()
   while parse(stream, markdown, flavour) end
   return markdown
 end
