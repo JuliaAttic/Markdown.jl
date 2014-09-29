@@ -1,3 +1,5 @@
+using Lazy
+
 import Base: peek
 
 const whitespace = " \t\r"
