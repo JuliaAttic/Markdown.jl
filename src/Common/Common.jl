@@ -156,11 +156,11 @@ function image(stream::IO)
   start = position(stream)
   while true
     startswith(stream, "![") || break
-    alt = read_until(stream, "]")
+    alt = readuntil(stream, "]")
     alt == nothing && break
     skipwhitespace(stream)
     startswith(stream, "(") || break
-    url = read_until(stream, ")")
+    url = readuntil(stream, ")")
     url == nothing && break
     return Image(url, alt)
   end
@@ -172,11 +172,11 @@ function link(stream::IO)
   start = position(stream)
   while true
     startswith(stream, "[") || break
-    text = read_until(stream, "]")
+    text = readuntil(stream, "]")
     text == nothing && break
     skipwhitespace(stream)
     startswith(stream, "(") || break
-    url = read_until(stream, ")")
+    url = readuntil(stream, ")")
     url == nothing && break
     return Link(text, url)
   end

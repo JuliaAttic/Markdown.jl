@@ -100,7 +100,7 @@ end
 Read the stream until the delimiter is met.
 The delimiter is consumed but not included.
 """
-function read_until(stream::IO, delimiter::String, newlines = false)
+function readuntil(stream::IO, delimiter::String, newlines = false)
   start = position(stream)
   buffer = IOBuffer()
   while !eof(stream)
