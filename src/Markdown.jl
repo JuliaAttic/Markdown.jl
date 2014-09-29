@@ -12,7 +12,7 @@ include("render/html.jl")
 
 # include("render/terminal/render.jl")
 
-export readme, license
+export readme, license, @md_str, @md_mstr
 
 parse(markdown::String; flavour = julia) = parse(IOBuffer(markdown), flavour = flavour)
 parse_file(file::String; flavour = julia) = parse(readall(file), flavour = flavour)
@@ -22,5 +22,13 @@ readme(pkg::Module; flavour = julia) = readme(string(pkg), flavour = flavour)
 
 license(pkg::String; flavour = julia) = parse_file(Pkg.dir(pkg, "LICENSE.md"), flavour = flavour)
 license(pkg::Module; flavour = julia) = license(string(pkg), flavour = flavour)
+
+macro md_str(s)
+  parse(s, flavour = :standard)
+end
+
+macro md_mstr(s)
+  parse(s, flavour = :standard)
+end
 
 end
