@@ -19,7 +19,7 @@ html(io::IO, md::MD) = html(io, md.content)
 
 function html{l}(io::IO, header::Header{l})
   withtag(io, "h$l") do
-    print(io, header.content)
+    print(io, header.text)
   end
 end
 

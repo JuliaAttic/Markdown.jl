@@ -42,7 +42,7 @@ end
 List(xs...) = List([xs...])
 
 type Header{level}
-  content
+  text
 end
 
 Header(s, level::Int) = Header{level}(s)
@@ -56,15 +56,15 @@ end
 Code(code) = Code("", code)
 
 type Bold
-  text::UTF8String
+  text
 end
 
 type Italic
-  text::UTF8String
+  text
 end
 
 type Link
-  content
+  text
   url::UTF8String
 end
 
