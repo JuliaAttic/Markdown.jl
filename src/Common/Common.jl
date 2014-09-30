@@ -4,34 +4,23 @@
 function paragraph(stream::IO, block::MD, config::Config)
   skipblank(stream) > 0 && return true
   buffer = IOBuffer()
-  md = Paragraph()
-  push!(block, md)
   skipwhitespace(stream)
   while !eof(stream)
     char = read(stream, Char)
     if char == '\n' || char == '\r'
-#       char == '\n' && startswith(stream, "\r")
       if startswith(stream, ["\n", "\r"], padding = true, newlines = false) || stop(stream, config.triggers)
         break
       else
         write(buffer, ' ')
       end
     else
-      if char in config.inner.triggers &&
-          (inner = parseinline(stream, config, offset = -1)) != nothing
-        push!(md.content, takebuf_string(buffer))
-        buffer = IOBuffer()
-        push!(md.content, inner)
-      else
-        write(buffer, char)
-      end
+      write(buffer, char)
     end
   end
-  push!(md.content, takebuf_string(buffer))
+  push!(block, Paragraph(parseinline(seek(buffer, 0), config)))
   return true
 end
 
-# Currently only supports level = 1
 function hash_header(stream::IO, md::MD, config::Config)
   startswith(stream, "#") || return false
   level = 1

@@ -11,10 +11,8 @@ function fenced_code(stream::IO, block::MD, config::Config)
 end
 
 function github_paragraph(stream::IO, block::MD, config::Config)
-  buffer = IOBuffer()
-  md = Paragraph()
-  push!(block, md)
   skipwhitespace(stream)
+  buffer = IOBuffer()
   while !eof(stream)
     char = read(stream, Char)
     if char == '\n'
@@ -26,17 +24,10 @@ function github_paragraph(stream::IO, block::MD, config::Config)
         write(buffer, '\n')
       end
     else
-      if char in config.inner.triggers &&
-          (inner = parseinline(stream, config, offset = -1)) != nothing
-        push!(md.content, takebuf_string(buffer))
-        buffer = IOBuffer()
-        push!(md.content, inner)
-      else
-        write(buffer, char)
-      end
+      write(buffer, char)
     end
   end
-  push!(md.content, takebuf_string(buffer))
+  push!(block, Paragraph(parseinline(seek(buffer, 0), config)))
   return true
 end
 
