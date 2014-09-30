@@ -23,12 +23,14 @@ readme(pkg::Module; flavour = julia) = readme(string(pkg), flavour = flavour)
 license(pkg::String; flavour = julia) = parse_file(Pkg.dir(pkg, "LICENSE.md"), flavour = flavour)
 license(pkg::Module; flavour = julia) = license(string(pkg), flavour = flavour)
 
-macro md_str(s)
-  parse(s)
+macro md_str(s, t...)
+  isempty(t) ?
+    parse(s) : parse(s, flavour = symbol(t[1]))
 end
 
-macro md_mstr(s)
-  parse(s)
+macro md_mstr(s, t...)
+  isempty(t) ?
+    parse(s) : parse(s, flavour = symbol(t[1]))
 end
 
 end
