@@ -1,5 +1,7 @@
 include("util.jl")
 
+# Config description and utils
+
 export Config
 
 type InnerConfig
@@ -32,29 +34,48 @@ function stop(stream::IO, triggers::Vector)
   any(t -> stop(stream, t), triggers)
 end
 
-"""
-Parser functions:
-  md – should be modified appropriately
-  return – basically, true if parse was successful
-    false uses the next parser in the queue, true
-    goes back to the beginning
+# Parser functions:
+#   md – should be modified appropriately
+#   return – basically, true if parse was successful
+#     false uses the next parser in the queue, true
+#     goes back to the beginning
+# 
+# Inner parsers:
+#   return – element to use or nothing
 
-Inner parsers:
-  return – element to use or nothing
-"""
+# Inner parsing
 
-function parseinline(stream::IO, parsers::Vector{Function}; offset = 0)
-  skip(stream, offset)
+function innerparse(stream::IO, parsers::Vector{Function})
   for parser in parsers
     inner = parser(stream)
-    inner == nothing || return inner
+    inner ≡ nothing || return inner
   end
-  skip(stream, -offset)
-  return nothing
 end
 
-parseinline(stream::IO, config::Config; offset = 0) =
-  parseinline(stream, config.inner.parsers; offset=offset)
+innerparse(stream::IO, config::Config) =
+  innerparse(stream, config.inner.parsers)
+
+function parseinline(stream::IO, config::Config)
+  content = {}
+  buffer = IOBuffer()
+  while !eof(stream)
+    char = peek(stream)
+    if char in config.inner.triggers &&
+        (inner = innerparse(stream, config)) != nothing
+      c = takebuf_string(buffer)
+      !isempty(c) && push!(content, c)
+      buffer = IOBuffer()
+      push!(content, inner)
+    else
+      write(buffer, read(stream, Char))
+    end
+  end
+  c = takebuf_string(buffer)
+  !isempty(c) && push!(content, c)
+  return content
+end
+
+# Block parsing
 
 function parse(stream::IO, block::MD, config::Config)
   eof(stream) && return false
