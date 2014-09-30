@@ -44,7 +44,7 @@ end
 
 function underline_header(stream::IO, md::MD, config::Config)
   if has_plain_last(md) && next_line_contains_only(stream, whitespace*"=", eat = true)
-    md[end] = Header(md[end][1].text)
+    md[end] = Header(md[end].content[1])
     return true
   else
     return false
