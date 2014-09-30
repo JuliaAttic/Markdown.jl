@@ -1,29 +1,38 @@
-type InnerConfig
-  triggers::UTF8String
-  parsers::Vector{Function}
-end
-
 type Config
-  triggers::Vector
-  parsers::Vector{Function}
-  inner::InnerConfig
+  interrupting::Vector{Function}
+  regular::Vector{Function}
+  inner::Dict{Char, Vector{Function}}
 end
 
-Config(triggers, parsers, inner_triggers, inner_parsers) =
-  Config(triggers, parsers, InnerConfig(inner_triggers, inner_parsers))
+const META = Dict{Function, Dict{Symbol, Any}}()
 
-function stop(stream::IO, trigger::Char)
-  !eof(stream) && peek(stream) == trigger
+meta(f) = META[f] = get(META, f, Dict{Symbol, Any}())
+
+interrupting!(f) = meta(f)[:interrupting] = true
+interrupting(f) = get(meta(f), :interrupting, false)
+
+triggers!(f, ts) = meta(f)[:triggers] = Set{Char}(ts)
+triggers(f) = meta(f)[:triggers]
+
+# Macros
+
+isexpr(x::Expr, ts...) = x.head in ts
+isexpr{T}(x::T, ts...) = T in ts
+
+macro interrupt (def)
+  quote
+    f = $(esc(def))
+    interrupting!(f)
+    f
+  end
 end
 
-function stop(stream::IO, trigger::String)
-  startswith(stream, trigger, eat = false)
-end
-
-function stop(stream::IO, trigger::Function)
-  trigger(stream)
-end
-
-function stop(stream::IO, triggers::Vector)
-  any(t -> stop(stream, t), triggers)
+macro triggers (ex)
+  isexpr(ex, :->) || error("invalid @triggers form, use ->")
+  ts, def = ex.args
+  quote
+    f = $(esc(def))
+    triggers!(f, $ts)
+    f
+  end
 end
