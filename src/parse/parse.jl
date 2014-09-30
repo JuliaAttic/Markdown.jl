@@ -27,8 +27,8 @@ function parseinline(stream::IO, config::Config)
   buffer = IOBuffer()
   while !eof(stream)
     char = peek(stream)
-    if char in config.inner.triggers &&
-        (inner = innerparse(stream, config)) != nothing
+    if haskey(config.inner, char) &&
+        (inner = innerparse(stream, config.inner[char])) != nothing
       c = takebuf_string(buffer)
       !isempty(c) && push!(content, c)
       buffer = IOBuffer()
@@ -47,9 +47,9 @@ parseinline(s::String, c::Config) =
 
 # Block parsing
 
-function parse(stream::IO, block::MD, config::Config)
+function parse(stream::IO, block::MD, config::Config; interrupting = false)
   eof(stream) && return false
-  for parser in config.parsers
+  for parser in (interrupting ? config.interrupting : [config.interrupting, config.regular])
     parser(stream, block, config) && return true
   end
   return false
