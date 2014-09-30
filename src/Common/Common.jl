@@ -112,21 +112,25 @@ end
 # Inline elements
 # –––––––––––––––
 
+@trigger '*' ->
 function asterisk_italic(stream::IO)
   result = parse_inline_wrapper(stream, "*")
   return result == nothing ? nothing : Italic(result)
 end
 
+@trigger '*' ->
 function asterisk_bold(stream::IO)
   result = parse_inline_wrapper(stream, "**")
   return result == nothing ? nothing : Bold(result)
 end
 
+@trigger '`' ->
 function inline_code(stream::IO)
   result = parse_inline_wrapper(stream, "`")
   return result == nothing ? nothing : Code(result)
 end
 
+@trigger '!' ->
 function image(stream::IO)
   start = position(stream)
   while true
@@ -143,6 +147,7 @@ function image(stream::IO)
   return nothing
 end
 
+@trigger '[' ->
 function link(stream::IO)
   start = position(stream)
   while true
@@ -161,6 +166,7 @@ end
 
 # Punctuation
 
+@trigger '-' ->
 function en_dash(stream::IO)
   if startswith(stream, "--")
     return "–"
@@ -169,6 +175,7 @@ end
 
 const escape_chars = "\\`*_#+-.!{}[]()"
 
+@trigger '\\' ->
 function escapes(stream::IO)
   pos = position(stream)
   if startswith(stream, "\\") && !eof(stream) && (c = peek(stream)) in escape_chars
@@ -181,11 +188,7 @@ end
 # Config
 # ––––––
 
-const common = Config(
-  # Block elements
-  ["```", '#'],
-  [list, indented_code, blockquote, hashheader, paragraph],
-  # Inline elements
-  "\\-`*![", [escapes, en_dash, inline_code, asterisk_bold, asterisk_italic, image, link])
+const common = config(list, indented_code, blockquote, hashheader, paragraph,
+                      escapes, en_dash, inline_code, asterisk_bold, asterisk_italic, image, link)
 
 flavours[:common] = common
