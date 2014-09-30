@@ -21,7 +21,7 @@ function paragraph(stream::IO, md::MD, config::Config)
   return true
 end
 
-function hash_header(stream::IO, md::MD, config::Config)
+function hashheader(stream::IO, md::MD, config::Config)
   startswith(stream, "#") || return false
   level = 1
   while startswith(stream, "#")
@@ -29,29 +29,15 @@ function hash_header(stream::IO, md::MD, config::Config)
   end
   h = readline(stream) |> chomp
   h = match(r"\s*(.*)(?<![#\s])", h).captures[1]
+  buffer = IOBuffer()
+  print(buffer, h)
   if !isempty(h)
-    push!(md.content, Header(h, level))
+    push!(md.content, Header(parseinline(seek(buffer, 0), config), level))
     return true
   else
     return false
   end
 end
-
-function has_plain_last(md::MD)
-  return !isempty(md) && isa(md[end], Paragraph) &&
-    !isempty(md[end].content) && isa(md[end].content[1], String)
-end
-
-function underline_header(stream::IO, md::MD, config::Config)
-  if has_plain_last(md) && next_line_contains_only(stream, whitespace*"=", eat = true)
-    md[end] = Header(md[end].content[1])
-    return true
-  else
-    return false
-  end
-end
-
-underline_header_trigger(stream::IO) = next_line_contains_only(stream, "=")
 
 function indented_code(stream::IO, block::MD, config::Config)
   start = position(stream)
@@ -198,7 +184,7 @@ end
 const common = Config(
   # Block elements
   ["```", '#'],
-  [list, indented_code, blockquote, hash_header, paragraph],
+  [list, indented_code, blockquote, hashheader, paragraph],
   # Inline elements
   "\\-`*![", [escapes, en_dash, inline_code, asterisk_bold, asterisk_italic, image, link])
 

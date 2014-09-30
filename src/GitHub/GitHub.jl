@@ -36,7 +36,7 @@ end
 github = Config(
   # Block elements
   ["```", '#'],
-  [list, indented_code, blockquote, fenced_code, hash_header, github_paragraph],
+  [list, indented_code, blockquote, fenced_code, hashheader, github_paragraph],
   # Inline elements
   "-`*![", [en_dash, inline_code, asterisk_bold, asterisk_italic, image, link])
 

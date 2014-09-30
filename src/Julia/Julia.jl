@@ -8,7 +8,7 @@ We start by borrowing GitHub's `fenced_code` extension – more to follow.
 julia = Config(
   # Block elements
   ["```", '#'],
-  [hash_header, list, indented_code, fenced_code, blockquote, paragraph],
+  [hashheader, list, indented_code, fenced_code, blockquote, paragraph],
   # Inline elements
   "-`*![", [en_dash, inline_code, asterisk_bold, asterisk_italic, image, link])
 

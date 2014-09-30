@@ -75,6 +75,9 @@ function parseinline(stream::IO, config::Config)
   return content
 end
 
+parseinline(s::String, c::Config) =
+  parseinline(IOBuffer(s), c)
+
 # Block parsing
 
 function parse(stream::IO, block::MD, config::Config)
