@@ -1,7 +1,7 @@
 # Block elements
 # ––––––––––––––
 
-function paragraph(stream::IO, block::MD, config::Config)
+function paragraph(stream::IO, md::MD, config::Config)
   skipblank(stream) > 0 && return true
   buffer = IOBuffer()
   skipwhitespace(stream)
@@ -17,7 +17,7 @@ function paragraph(stream::IO, block::MD, config::Config)
       write(buffer, char)
     end
   end
-  push!(block, Paragraph(parseinline(seek(buffer, 0), config)))
+  push!(md, Paragraph(parseinline(seek(buffer, 0), config)))
   return true
 end
 
