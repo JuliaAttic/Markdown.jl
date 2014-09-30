@@ -8,7 +8,7 @@ function paragraph(stream::IO, md::MD, config::Config)
   while !eof(stream)
     char = read(stream, Char)
     if char == '\n' || char == '\r'
-      if startswith(stream, ["\n", "\r"], padding = true, newlines = false) || stop(stream, config.triggers)
+      if startswith(stream, ["\n", "\r"], padding = true, newlines = false)
         break
       else
         write(buffer, ' ')
@@ -94,7 +94,7 @@ function list(stream::IO, block::MD, config::Config)
       if c == '\n'
         eof(stream) && break
         next = peek(stream)
-        if next == '\n' || stop(stream, config.triggers)
+        if next == '\n'
           break
         else
           fresh_line = true
