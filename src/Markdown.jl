@@ -24,11 +24,11 @@ license(pkg::String; flavour = julia) = parse_file(Pkg.dir(pkg, "LICENSE.md"), f
 license(pkg::Module; flavour = julia) = license(string(pkg), flavour = flavour)
 
 macro md_str(s)
-  parse(s, flavour = :standard)
+  parse(s)
 end
 
 macro md_mstr(s)
-  parse(s, flavour = :standard)
+  parse(s)
 end
 
 end
