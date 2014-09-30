@@ -197,8 +197,8 @@ end
 
 const common = Config(
   # Block elements
-  ["```", '#', underline_header_trigger],
-  [list, indented_code, blockquote, underline_header, hash_header, paragraph],
+  ["```", '#'],
+  [list, indented_code, blockquote, hash_header, paragraph],
   # Inline elements
   "\\-`*![", [escapes, en_dash, inline_code, asterisk_bold, asterisk_italic, image, link])
 
