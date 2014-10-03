@@ -53,24 +53,23 @@ function indentcode(stream::IO, block::MD, config::Config)
   return false
 end
 
+# TODO: Laziness
+@breaking true ->
 function blockquote(stream::IO, block::MD, config::Config)
-  return false
-#   start = position(stream)
-#   skipblank(stream)
-#   buffer = IOBuffer()
-#   @label loop
-#   while startswith(stream, "> ") || startswith(stream, ">")
-#     write(buffer, readline(stream))
-#   end
-#   blankline(stream) && @goto loop
-#   md = takebuf_string(buffer)
-#   if !isempty(md)
-#     push!(block, BlockQuote(parse(md).content))
-#     return true
-#   else
-#     seek(stream, start)
-#     return false
-#   end
+  withstream(stream) do
+    buffer = IOBuffer()
+    while startswith(stream, ">")
+      startswith(stream, " ")
+      write(buffer, readline(stream))
+    end
+    md = takebuf_string(buffer)
+    if !isempty(md)
+      push!(block, BlockQuote(parse(md, flavour = config).content))
+      return true
+    else
+      return false
+    end
+  end
 end
 
 # Todo: ordered lists, inline formatting
