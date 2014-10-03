@@ -134,19 +134,16 @@ end
 
 @trigger '!' ->
 function image(stream::IO)
-  start = position(stream)
-  while true
-    startswith(stream, "![") || break
+  withstream(stream) do
+    startswith(stream, "![") || return
     alt = readuntil(stream, "]")
-    alt == nothing && break
+    alt ≡ nothing && return
     skipwhitespace(stream)
-    startswith(stream, "(") || break
+    startswith(stream, "(") || return
     url = readuntil(stream, ")")
-    url == nothing && break
+    url ≡ nothing && return
     return Image(url, alt)
   end
-  seek(stream, start)
-  return nothing
 end
 
 @trigger '[' ->
