@@ -1,6 +1,3 @@
-include("util.jl")
-include("config.jl")
-
 # Parser functions:
 #   md – should be modified appropriately
 #   return – basically, true if parse was successful

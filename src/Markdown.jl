@@ -1,7 +1,10 @@
 module Markdown
 
-include("Common/types.jl")
+include("config.jl")
+include("util.jl")
 include("parse/parse.jl")
+
+include("Common/types.jl")
 include("Common/Common.jl")
 include("GitHub/GitHub.jl")
 include("Julia/Julia.jl")
