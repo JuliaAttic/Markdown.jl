@@ -85,7 +85,7 @@ function htmlinline(io::IO, md::Italic)
 end
 
 function htmlinline(io::IO, md::Image)
-  print(io, """<img src="$(md.url)" alt="$(md.alt)"></img>""")
+  print(io, """<img src="$(md.url)" alt="$(md.alt)" />""")
 end
 
 function htmlinline(io::IO, link::Link)
