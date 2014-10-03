@@ -30,7 +30,7 @@ Each Markdown flavour is specified declaratively by simply listing the features 
 
 ```julia
 # Block Elements
-[hash_header, list, indentcode, fenced_code, blockquote, underline_header, paragraph]
+[hash_header, list, indentcode, fencedcode, blockquote, underline_header, paragraph]
 # Inline Elements
 [en_dash, inline_code, asterisk_bold, asterisk_italic, image, link]
 ```
@@ -43,14 +43,14 @@ More precisely, the Julia doc flavour is specified as:
 julia = Config(
   # Block elements
   ["```", '#', underline_header_trigger],
-  [hash_header, list, indentcode, fenced_code, blockquote, underline_header, paragraph],
+  [hash_header, list, indentcode, fencedcode, blockquote, underline_header, paragraph],
   # Inline elements
   "-`*![", [en_dash, inline_code, asterisk_bold, asterisk_italic, image, link])
 ```
 
 This is called a config object. Those characters and strings listed before the parser are *triggers*.
 
-Block triggers tell the current block parser to stop immediately; for example, usually `paragraph` will only stop when it meets a blank line, but the ````"```"```` trigger stops it so that `fenced_code` can take over.
+Block triggers tell the current block parser to stop immediately; for example, usually `paragraph` will only stop when it meets a blank line, but the ````"```"```` trigger stops it so that `fencedcode` can take over.
 
 Inline triggers tell the current block parser to test whether any of the inner parsers apply. For example, `paragraph` will consume input until it meets one of `[`, `!`, etc., at which point it apply each of the inline parsers and consume the result, if any.
 

@@ -1,5 +1,5 @@
 @breaking true ->
-function fenced_code(stream::IO, block::MD, config::Config)
+function fencedcode(stream::IO, block::MD, config::Config)
   startswith(stream, "```", padding = true) || return false
   readline(stream)
   buffer = IOBuffer()
@@ -35,5 +35,5 @@ end
 
 # TODO: tables
 
-@flavour github [list, indentcode, blockquote, fenced_code, hashheader, github_paragraph,
+@flavour github [list, indentcode, blockquote, fencedcode, hashheader, github_paragraph,
                  en_dash, inline_code, asterisk_bold, asterisk_italic, image, link]
