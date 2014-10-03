@@ -105,7 +105,7 @@ returns the stream to its initial position.
 function withstream(f, stream)
   pos = position(stream)
   result = f()
-  result ≡ nothing || result ≡ false && seek(stream, pos)
+  result ≡ nothing && seek(stream, pos)
   return result
 end
 
