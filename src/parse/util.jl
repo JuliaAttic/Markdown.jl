@@ -115,12 +115,21 @@ The delimiter is consumed but not included.
 Returns nothing and resets the stream if delim is
 not found.
 """
-function readuntil(stream::IO, delimiter; newlines = false)
+function readuntil(stream::IO, delimiter; newlines = false, match = nothing)
   withstream(stream) do
     buffer = IOBuffer()
+    count = 0
     while !eof(stream)
-      startswith(stream, delimiter) && return takebuf_string(buffer)
+      if startswith(stream, delimiter)
+        if count == 0
+          return takebuf_string(buffer)
+        else
+          count -= 1
+          write(buffer, delimiter)
+        end
+      end
       char = read(stream, Char)
+      char == match && (count += 1)
       !newlines && char == '\n' && break
       write(buffer, char)
     end
