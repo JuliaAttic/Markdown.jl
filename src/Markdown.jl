@@ -12,7 +12,7 @@ include("Julia/Julia.jl")
 include("render/html.jl")
 # include("render/latex.jl")
 
-# include("render/terminal/render.jl")
+include("render/terminal/render.jl")
 
 export readme, license, @md_str, @md_mstr
 
