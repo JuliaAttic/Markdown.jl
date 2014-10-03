@@ -56,22 +56,23 @@ function indented_code(stream::IO, block::MD, config::Config)
 end
 
 function blockquote(stream::IO, block::MD, config::Config)
-  start = position(stream)
-  skipblank(stream)
-  buffer = IOBuffer()
-  @label loop
-  while startswith(stream, "> ") || startswith(stream, ">")
-    write(buffer, readline(stream))
-  end
-  blankline(stream) && @goto loop
-  md = takebuf_string(buffer)
-  if !isempty(md)
-    push!(block, BlockQuote(parse(md).content))
-    return true
-  else
-    seek(stream, start)
-    return false
-  end
+  return false
+#   start = position(stream)
+#   skipblank(stream)
+#   buffer = IOBuffer()
+#   @label loop
+#   while startswith(stream, "> ") || startswith(stream, ">")
+#     write(buffer, readline(stream))
+#   end
+#   blankline(stream) && @goto loop
+#   md = takebuf_string(buffer)
+#   if !isempty(md)
+#     push!(block, BlockQuote(parse(md).content))
+#     return true
+#   else
+#     seek(stream, start)
+#     return false
+#   end
 end
 
 # Todo: ordered lists, inline formatting
