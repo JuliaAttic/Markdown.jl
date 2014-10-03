@@ -172,16 +172,15 @@ function en_dash(stream::IO)
   end
 end
 
-const escape_chars = "\\`*_#+-.!{}[]()"
+const escape_chars = "\\`*_#+-.!{[("
 
 @trigger '\\' ->
 function escapes(stream::IO)
-  pos = position(stream)
-  if startswith(stream, "\\") && !eof(stream) && (c = peek(stream)) in escape_chars
-    return read(stream, Char) |> string
+  withstream(stream) do
+    if startswith(stream, "\\") && !eof(stream) && (c = read(stream, Char)) in escape_chars
+      return string(c)
+    end
   end
-  seek(stream, pos)
-  return
 end
 
 # Config
