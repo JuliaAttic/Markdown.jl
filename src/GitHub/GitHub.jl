@@ -5,7 +5,7 @@ function fenced_code(stream::IO, block::MD, config::Config)
   buffer = IOBuffer()
   while !eof(stream)
     startswith(stream, "```") && break
-    write(buffer, read(stream, Char))
+    write(buffer, readline(stream))
   end
   push!(block, Code(takebuf_string(buffer) |> chomp))
   return true
