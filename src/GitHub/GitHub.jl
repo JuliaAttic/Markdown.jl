@@ -1,4 +1,4 @@
-function fenced_code(stream::IO, block::MD, config::Config)
+@breaking function fenced_code(stream::IO, block::MD, config::Config)
   startswith(stream, "```", padding = true) || return false
   readline(stream)
   buffer = IOBuffer()
@@ -33,11 +33,7 @@ end
 
 # TODO: tables
 
-github = Config(
-  # Block elements
-  ["```", '#'],
-  [list, indented_code, blockquote, fenced_code, hashheader, github_paragraph],
-  # Inline elements
-  "-`*![", [en_dash, inline_code, asterisk_bold, asterisk_italic, image, link])
+github = config(list, indented_code, blockquote, fenced_code, hashheader, github_paragraph,
+                en_dash, inline_code, asterisk_bold, asterisk_italic, image, link)
 
 flavours[:github] = github
