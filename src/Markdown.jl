@@ -8,7 +8,7 @@ include("Common/Common.jl")
 include("GitHub/GitHub.jl")
 include("Julia/Julia.jl")
 
-# include("render/plain.jl")
+include("render/plain.jl")
 include("render/html.jl")
 # include("render/latex.jl")
 
