@@ -151,19 +151,16 @@ end
 
 @trigger '[' ->
 function link(stream::IO)
-  start = position(stream)
-  while true
-    startswith(stream, "[") || break
+  withstream(stream) do
+    startswith(stream, "[") || return
     text = readuntil(stream, "]")
-    text == nothing && break
+    text ≡ nothing && return
     skipwhitespace(stream)
-    startswith(stream, "(") || break
+    startswith(stream, "(") || return
     url = readuntil(stream, ")")
-    url == nothing && break
+    url ≡ nothing && return
     return Link(text, url)
   end
-  seek(stream, start)
-  return nothing
 end
 
 # Punctuation
