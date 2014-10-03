@@ -23,6 +23,7 @@ function paragraph(stream::IO, md::MD, config::Config)
   return true
 end
 
+@breaking true ->
 function hashheader(stream::IO, md::MD, config::Config)
   startswith(stream, "#") || return false
   level = 1
