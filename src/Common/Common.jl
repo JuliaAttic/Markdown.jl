@@ -2,7 +2,6 @@
 # ––––––––––––––
 
 function paragraph(stream::IO, md::MD, config::Config)
-  skipblank(stream) > 0 && return true
   buffer = IOBuffer()
   p = Paragraph()
   push!(md, p)
@@ -44,7 +43,6 @@ end
 
 function indented_code(stream::IO, block::MD, config::Config)
   start = position(stream)
-  skipblank(stream)
   buffer = IOBuffer()
   while startswith(stream, "    ") || startswith(stream, "\t")
     write(buffer, readline(stream))

@@ -12,7 +12,6 @@ function fenced_code(stream::IO, block::MD, config::Config)
 end
 
 function github_paragraph(stream::IO, md::MD, config::Config)
-  skipblank(stream) > 0 && return true
   skipwhitespace(stream)
   buffer = IOBuffer()
   p = Paragraph()
