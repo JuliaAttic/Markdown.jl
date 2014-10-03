@@ -6,4 +6,4 @@ We start by borrowing GitHub's `fenced_code` extension – more to follow.
 """
 
 @flavour julia [hashheader, list, indentcode, fenced_code, blockquote, paragraph,
-                en_dash, inline_code, asterisk_bold, asterisk_italic, image, link]
+                escapes, en_dash, inline_code, asterisk_bold, asterisk_italic, image, link]
