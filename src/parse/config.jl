@@ -49,6 +49,8 @@ macro trigger (ex)
   end
 end
 
+# Construction
+
 function config(parsers::Function...)
   c = Config()
   for parser in parsers
@@ -66,11 +68,28 @@ function config(parsers::Function...)
   return c
 end
 
+# Flavour definitions
+
 const flavours = Dict{Symbol, Config}()
 
 macro flavour (name, features)
   quote
     const $(esc(name)) = config($(map(esc,features.args)...))
     flavours[$(Expr(:quote, name))] = $(esc(name))
+  end
+end
+
+# Dynamic scoping of current config
+
+_config_ = nothing
+
+function withconfig(f, config)
+  global _config_
+  old = _config_
+  _config_ = config
+  try
+    f()
+  finally
+    _config_ = old
   end
 end

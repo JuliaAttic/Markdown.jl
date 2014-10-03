@@ -88,8 +88,10 @@ function htmlinline(io::IO, md::Image)
   print(io, """<img src="$(md.url)" alt="$(md.alt)"></img>""")
 end
 
-function htmlinline(io::IO, md::Link)
-  print(io, """<a href="$(md.url)">$(md.text)</a>""")
+function htmlinline(io::IO, link::Link)
+  print(io, """<a href="$(link.url)">""")
+  htmlinline(io, link.text)
+  print(io,"""</a>""")
 end
 
 # API

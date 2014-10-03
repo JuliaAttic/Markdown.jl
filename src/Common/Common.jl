@@ -156,7 +156,7 @@ function link(stream::IO)
     startswith(stream, '(') || return
     url = readuntil(stream, ')', match = '(')
     url ≡ nothing && return
-    return Link(text, url)
+    return Link(parseinline(text), url)
   end
 end
 

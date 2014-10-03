@@ -22,18 +22,18 @@ innerparse(stream::IO, config::Config) =
 function parseinline(stream::IO, config::Config)
   content = {}
   buffer = IOBuffer()
-  while !eof(stream)
-    char = peek(stream)
-    if haskey(config.inner, char) &&
-        (inner = innerparse(stream, config.inner[char])) != nothing
-      c = takebuf_string(buffer)
-      !isempty(c) && push!(content, c)
-      buffer = IOBuffer()
-      push!(content, inner)
-    else
-      write(buffer, read(stream, Char))
+    while !eof(stream)
+      char = peek(stream)
+      if haskey(config.inner, char) &&
+          (inner = innerparse(stream, config.inner[char])) != nothing
+        c = takebuf_string(buffer)
+        !isempty(c) && push!(content, c)
+        buffer = IOBuffer()
+        push!(content, inner)
+      else
+        write(buffer, read(stream, Char))
+      end
     end
-  end
   c = takebuf_string(buffer)
   !isempty(c) && push!(content, c)
   return content
@@ -41,6 +41,8 @@ end
 
 parseinline(s::String, c::Config) =
   parseinline(IOBuffer(s), c)
+
+parseinline(s) = parseinline(s, _config_)
 
 # Block parsing
 
@@ -56,6 +58,8 @@ end
 function parse(stream::IO; flavour = julia)
   isa(flavour, Symbol) && (flavour = flavours[flavour])
   markdown = MD()
-  while parse(stream, markdown, flavour) end
+  withconfig(flavour) do
+    while parse(stream, markdown, flavour) end
+  end
   return markdown
 end
