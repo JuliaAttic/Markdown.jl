@@ -47,9 +47,9 @@ parseinline(s::String, c::Config) =
 
 # Block parsing
 
-function parse(stream::IO, block::MD, config::Config; interrupting = false)
+function parse(stream::IO, block::MD, config::Config; breaking = false)
   eof(stream) && return false
-  for parser in (interrupting ? config.interrupting : [config.interrupting, config.regular])
+  for parser in (breaking ? config.breaking : [config.breaking, config.regular])
     parser(stream, block, config) && return true
   end
   return false

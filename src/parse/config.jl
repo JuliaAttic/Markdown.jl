@@ -1,7 +1,7 @@
 typealias InnerConfig Dict{Char, Vector{Function}}
 
 type Config
-  interrupting::Vector{Function}
+  breaking::Vector{Function}
   regular::Vector{Function}
   inner::InnerConfig
 end
@@ -14,8 +14,8 @@ getset(coll, key, default) = coll[key] = get(coll, key, default)
 
 meta(f) = getset(META, f, Dict{Symbol, Any}())
 
-interrupting!(f) = meta(f)[:interrupting] = true
-interrupting(f) = get(meta(f), :interrupting, false)
+breaking!(f) = meta(f)[:breaking] = true
+breaking(f) = get(meta(f), :breaking, false)
 
 triggers!(f, ts) = meta(f)[:triggers] = Set{Char}(ts)
 triggers(f) = get(meta(f), :triggers, Set{Char}())
@@ -25,10 +25,10 @@ triggers(f) = get(meta(f), :triggers, Set{Char}())
 isexpr(x::Expr, ts...) = x.head in ts
 isexpr{T}(x::T, ts...) = T in ts
 
-macro interrupt (def)
+macro breaking (def)
   quote
     f = $(esc(def))
-    interrupting!(f)
+    breaking!(f)
     f
   end
 end
@@ -47,8 +47,8 @@ function config(parsers::Function...)
   c = Config()
   for parser in parsers
     ts = triggers(parser)
-    if interrupting(parser)
-      push!(c.interrupting, parser)
+    if breaking(parser)
+      push!(c.breaking, parser)
     elseif !isempty(ts)
       for t in ts
         push!(getset(c.inner, t, Function[]), parser)
