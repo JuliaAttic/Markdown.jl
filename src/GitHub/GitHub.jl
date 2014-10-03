@@ -35,5 +35,5 @@ end
 
 # TODO: tables
 
-@flavour github [list, indented_code, blockquote, fenced_code, hashheader, github_paragraph,
+@flavour github [list, indentcode, blockquote, fenced_code, hashheader, github_paragraph,
                  en_dash, inline_code, asterisk_bold, asterisk_italic, image, link]

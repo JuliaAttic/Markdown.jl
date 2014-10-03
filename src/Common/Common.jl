@@ -41,7 +41,7 @@ function hashheader(stream::IO, md::MD, config::Config)
   end
 end
 
-function indented_code(stream::IO, block::MD, config::Config)
+function indentcode(stream::IO, block::MD, config::Config)
   start = position(stream)
   buffer = IOBuffer()
   while startswith(stream, "    ") || startswith(stream, "\t")
@@ -190,5 +190,5 @@ end
 # Config
 # ––––––
 
-@flavour common [list, indented_code, blockquote, hashheader, paragraph,
+@flavour common [list, indentcode, blockquote, hashheader, paragraph,
                  escapes, en_dash, inline_code, asterisk_bold, asterisk_italic, image, link]

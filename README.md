@@ -30,7 +30,7 @@ Each Markdown flavour is specified declaratively by simply listing the features 
 
 ```julia
 # Block Elements
-[hash_header, list, indented_code, fenced_code, blockquote, underline_header, paragraph]
+[hash_header, list, indentcode, fenced_code, blockquote, underline_header, paragraph]
 # Inline Elements
 [en_dash, inline_code, asterisk_bold, asterisk_italic, image, link]
 ```
@@ -43,7 +43,7 @@ More precisely, the Julia doc flavour is specified as:
 julia = Config(
   # Block elements
   ["```", '#', underline_header_trigger],
-  [hash_header, list, indented_code, fenced_code, blockquote, underline_header, paragraph],
+  [hash_header, list, indentcode, fenced_code, blockquote, underline_header, paragraph],
   # Inline elements
   "-`*![", [en_dash, inline_code, asterisk_bold, asterisk_italic, image, link])
 ```
