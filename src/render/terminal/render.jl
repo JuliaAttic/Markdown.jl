@@ -9,10 +9,11 @@ const margin = 2
 cols() = Base.tty_size()[2]
 
 function term(io::IO, content::Vector, cols)
-  for md in content
+  for md in content[1:end-1]
     term(io, md, cols)
     println(io)
   end
+  term(io, content[end], cols)
 end
 
 term(io::IO, md::MD, columns = cols()) = term(io, md.content, columns)
@@ -32,7 +33,7 @@ function term(io::IO, md::BlockQuote, columns)
   println(io)
 end
 
-function term(io::IO, md::List, columns) # TODO: handle no column number
+function term(io::IO, md::List, columns)
   for point in md.items
     print(io, " "^2margin, "• ")
     print_wrapped(io, width = columns-(4margin+2), pre = " "^(2margin+2), i = 2margin+2) do io
@@ -97,12 +98,6 @@ function terminline(io::IO, code::Code)
   print_with_format(:cyan, io, code.code)
 end
 
-# # Show in terminal
+# Show in terminal
 
-# import Base.show, Base.Terminals.TextTerminal
-
-# function show(term::TextTerminal, md::Content)
-#   global tty = term
-#   println(term)
-#   terminal_print(term, md, columns = size(term)[2])
-# end
+Base.display(d::Base.REPL.REPLDisplay, md::MD) = term(Base.REPL.outstream(d.repl), md)
