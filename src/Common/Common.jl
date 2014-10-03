@@ -10,8 +10,7 @@ function paragraph(stream::IO, md::MD, config::Config)
   while !eof(stream)
     char = read(stream, Char)
     if char == '\n' || char == '\r'
-      if startswith(stream, ["\n", "\r"], padding = true, newlines = false) ||
-          parse(stream, md, config, breaking = true)
+      if blankline(stream) || parse(stream, md, config, breaking = true)
         break
       else
         write(buffer, ' ')

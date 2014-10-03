@@ -21,8 +21,7 @@ function github_paragraph(stream::IO, md::MD, config::Config)
     char = read(stream, Char)
     if char == '\n'
       eof(stream) && break
-      if startswith(stream, ["\n", "\r"], padding = true, newlines = false) ||
-          parse(stream, md, config, breaking = true)
+      if blankline(stream) || parse(stream, md, config, breaking = true)
         break
       else
         write(buffer, '\n')

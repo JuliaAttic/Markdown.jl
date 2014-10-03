@@ -33,9 +33,9 @@ end
 Returns true if the line contains only (and
 at least one of) the characters given.
 """
-function next_line_contains_only(io::IO, chars::String; allow_whitespace = true,
-                                                        eat = false,
-                                                        allowempty = false)
+function linecontains(io::IO, chars; allow_whitespace = true,
+                                     eat = true,
+                                     allowempty = false)
   start = position(io)
   l = readline(io) |> chomp
   length(l) == 0 && return allowempty
@@ -50,9 +50,11 @@ function next_line_contains_only(io::IO, chars::String; allow_whitespace = true,
   return result
 end
 
-function blankline(io::IO)
-  !eof(io) && next_line_contains_only(io, "", allow_whitespace = true, allowempty = true)
-end
+blankline(io::IO; eat = true) =
+  linecontains(io, "",
+               allow_whitespace = true,
+               allowempty = true,
+               eat = eat)
 
 """
 Test if the stream starts with the given string.
