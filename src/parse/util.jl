@@ -115,7 +115,7 @@ The delimiter is consumed but not included.
 Returns nothing and resets the stream if delim is
 not found.
 """
-function readuntil(stream::IO, delimiter::String, newlines = false)
+function readuntil(stream::IO, delimiter; newlines = false)
   withstream(stream) do
     buffer = IOBuffer()
     while !eof(stream)

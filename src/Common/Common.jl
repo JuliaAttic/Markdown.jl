@@ -136,11 +136,11 @@ end
 function image(stream::IO)
   withstream(stream) do
     startswith(stream, "![") || return
-    alt = readuntil(stream, "]")
+    alt = readuntil(stream, ']')
     alt ≡ nothing && return
     skipwhitespace(stream)
-    startswith(stream, "(") || return
-    url = readuntil(stream, ")")
+    startswith(stream, '(') || return
+    url = readuntil(stream, ')')
     url ≡ nothing && return
     return Image(url, alt)
   end
@@ -149,12 +149,12 @@ end
 @trigger '[' ->
 function link(stream::IO)
   withstream(stream) do
-    startswith(stream, "[") || return
-    text = readuntil(stream, "]")
+    startswith(stream, '[') || return
+    text = readuntil(stream, ']')
     text ≡ nothing && return
     skipwhitespace(stream)
-    startswith(stream, "(") || return
-    url = readuntil(stream, ")")
+    startswith(stream, '(') || return
+    url = readuntil(stream, ')')
     url ≡ nothing && return
     return Link(text, url)
   end
