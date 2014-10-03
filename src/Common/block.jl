@@ -4,8 +4,6 @@
 
 type Paragraph
   content
-
-  Paragraph(x) = new(x)
 end
 
 Paragraph() = Paragraph({})
@@ -90,8 +88,6 @@ end
 
 type BlockQuote
   content
-
-  BlockQuote(x) = new(x)
 end
 
 BlockQuote() = BlockQuote({})
