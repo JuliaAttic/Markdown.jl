@@ -65,3 +65,12 @@ function config(parsers::Function...)
   end
   return c
 end
+
+const flavours = Dict{Symbol, Config}()
+
+macro flavour (name, features)
+  quote
+    const $(esc(name)) = config($(map(esc,features.args)...))
+    flavours[$(Expr(:quote, name))] = $(esc(name))
+  end
+end

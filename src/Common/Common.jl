@@ -188,7 +188,5 @@ end
 # Config
 # ––––––
 
-const common = config(list, indented_code, blockquote, hashheader, paragraph,
-                      escapes, en_dash, inline_code, asterisk_bold, asterisk_italic, image, link)
-
-flavours[:common] = common
+@flavour common [list, indented_code, blockquote, hashheader, paragraph,
+                 escapes, en_dash, inline_code, asterisk_bold, asterisk_italic, image, link]

@@ -55,8 +55,6 @@ function parse(stream::IO, block::MD, config::Config; breaking = false)
   return false
 end
 
-const flavours = Dict{Symbol, Config}()
-
 function parse(stream::IO; flavour = julia)
   isa(flavour, Symbol) && (flavour = flavours[flavour])
   markdown = MD()

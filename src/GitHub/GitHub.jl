@@ -34,7 +34,5 @@ end
 
 # TODO: tables
 
-github = config(list, indented_code, blockquote, fenced_code, hashheader, github_paragraph,
-                en_dash, inline_code, asterisk_bold, asterisk_italic, image, link)
-
-flavours[:github] = github
+@flavour github [list, indented_code, blockquote, fenced_code, hashheader, github_paragraph,
+                 en_dash, inline_code, asterisk_bold, asterisk_italic, image, link]
