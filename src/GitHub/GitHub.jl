@@ -1,4 +1,5 @@
-@breaking function fenced_code(stream::IO, block::MD, config::Config)
+@breaking true ->
+function fenced_code(stream::IO, block::MD, config::Config)
   startswith(stream, "```", padding = true) || return false
   readline(stream)
   buffer = IOBuffer()

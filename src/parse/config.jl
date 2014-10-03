@@ -25,11 +25,17 @@ triggers(f) = get(meta(f), :triggers, Set{Char}())
 isexpr(x::Expr, ts...) = x.head in ts
 isexpr{T}(x::T, ts...) = T in ts
 
-macro breaking (def)
-  quote
-    f = $(esc(def))
-    breaking!(f)
-    f
+macro breaking (ex)
+  isexpr(ex, :->) || error("invalid @breaking form, use ->")
+  b, def = ex.args
+  if b
+    quote
+      f = $(esc(def))
+      breaking!(f)
+      f
+    end
+  else
+    esc(def)
   end
 end
 
