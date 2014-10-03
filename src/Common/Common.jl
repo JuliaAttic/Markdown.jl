@@ -4,11 +4,14 @@
 function paragraph(stream::IO, md::MD, config::Config)
   skipblank(stream) > 0 && return true
   buffer = IOBuffer()
+  p = Paragraph()
+  push!(md, p)
   skipwhitespace(stream)
   while !eof(stream)
     char = read(stream, Char)
     if char == '\n' || char == '\r'
-      if startswith(stream, ["\n", "\r"], padding = true, newlines = false)
+      if startswith(stream, ["\n", "\r"], padding = true, newlines = false) ||
+          parse(stream, md, config, breaking = true)
         break
       else
         write(buffer, ' ')
@@ -17,7 +20,7 @@ function paragraph(stream::IO, md::MD, config::Config)
       write(buffer, char)
     end
   end
-  push!(md, Paragraph(parseinline(seek(buffer, 0), config)))
+  p.content = parseinline(seek(buffer, 0), config)
   return true
 end
 
