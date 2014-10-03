@@ -42,15 +42,15 @@ function hashheader(stream::IO, md::MD, config::Config)
 end
 
 function indentcode(stream::IO, block::MD, config::Config)
-  start = position(stream)
-  buffer = IOBuffer()
-  while startswith(stream, "    ") || startswith(stream, "\t")
-    write(buffer, readline(stream))
+  withstream(stream) do
+    buffer = IOBuffer()
+    while startswith(stream, "    ") || startswith(stream, "\t")
+      write(buffer, readline(stream))
+    end
+    code = takebuf_string(buffer)
+    !isempty(code) && (push!(block, Code(chomp(code))); return true)
+    return false
   end
-  code = takebuf_string(buffer)
-  !isempty(code) && (push!(block, BlockCode(chomp(code))); return true)
-  seek(stream, start)
-  return false
 end
 
 # TODO: Laziness
