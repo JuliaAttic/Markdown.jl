@@ -10,7 +10,7 @@ end
 
 function html(io::IO, content::Vector)
   for md in content
-    html(io::IO, md)
+    html(io, md)
     println(io)
   end
 end
