@@ -1,10 +1,5 @@
 include("formatting.jl")
 
-# Render Content to Terminal
-
-# Need separate print and print_inline
-# Block should handle padding, not individual elements
-
 const margin = 2
 cols() = Base.tty_size()[2]
 
