@@ -31,6 +31,7 @@ macro md_str(s, t...)
 end
 
 macro md_mstr(s, t...)
+  s = Base.triplequoted(s)
   md = isempty(t) ? parse(s) : parse(s, flavour = symbol(t[1]))
   esc(toexpr(md))
 end
