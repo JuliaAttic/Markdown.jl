@@ -39,18 +39,18 @@ innerparse(stream::IO, config::Config) =
 function parseinline(stream::IO, config::Config)
   content = {}
   buffer = IOBuffer()
-    while !eof(stream)
-      char = peek(stream)
-      if haskey(config.inner, char) &&
-          (inner = innerparse(stream, config.inner[char])) != nothing
-        c = takebuf_string(buffer)
-        !isempty(c) && push!(content, c)
-        buffer = IOBuffer()
-        push!(content, inner)
-      else
-        write(buffer, read(stream, Char))
-      end
+  while !eof(stream)
+    char = peek(stream)
+    if haskey(config.inner, char) &&
+        (inner = innerparse(stream, config.inner[char])) != nothing
+      c = takebuf_string(buffer)
+      !isempty(c) && push!(content, c)
+      buffer = IOBuffer()
+      push!(content, inner)
+    else
+      write(buffer, read(stream, Char))
     end
+  end
   c = takebuf_string(buffer)
   !isempty(c) && push!(content, c)
   return content
