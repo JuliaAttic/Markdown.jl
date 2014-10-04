@@ -91,7 +91,7 @@ function terminline(io::IO, md::Image)
 end
 
 function terminline(io::IO, md::Link)
-  print(io, md.text)
+  terminline(io, md.text)
 end
 
 function terminline(io::IO, code::Code)
