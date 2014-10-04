@@ -160,5 +160,6 @@ end
 function showrest(io::IO)
   start = position(io)
   show(readall(io))
+  println()
   seek(io, start)
 end
