@@ -1,94 +1,113 @@
-import Base.writemime
+include("rich.jl")
 
-export html
+# Utils
 
-function with_tag(f, io, tag)
+function withtag(f, io, tag)
   print(io, "<$tag>")
   f()
   print(io, "</$tag>")
 end
 
-writemime(io::IO, ::MIME"text/html", md::Content) =
-  writemime(io, "text/plain", md)
+# Block elements
 
-function writemime(io::IO, mime::MIME"text/html", block::Block)
-  for md in block.content[1:end-1]
-    writemime(io::IO, mime, md)
+function html(io::IO, content::Vector)
+  for md in content
+    html(io, md)
     println(io)
   end
-  writemime(io::IO, mime, block.content[end])
 end
 
-function writemime{l}(io::IO, mime::MIME"text/html", header::Header{l})
-  with_tag(io, "h$l") do
-    print(io, header.text)
+html(io::IO, md::MD) = html(io, md.content)
+
+function html{l}(io::IO, header::Header{l})
+  withtag(io, "h$l") do
+    htmlinline(io, header.text)
   end
 end
 
-function writemime(io::IO, ::MIME"text/html", code::BlockCode)
-  with_tag(io, "pre") do
-    with_tag(io, "code") do
+function html(io::IO, code::Code)
+  withtag(io, :pre) do
+    withtag(io, :code) do
       print(io, code.code)
     end
   end
 end
 
-function writemime(io::IO, ::MIME"text/html", code::InlineCode)
-  with_tag(io, "code") do
-    print(io, code.code)
+function html(io::IO, md::Paragraph)
+  withtag(io, :p) do
+    htmlinline(io, md.content)
   end
 end
 
-function writemime(io::IO, ::MIME"text/html", md::Paragraph)
-  with_tag(io, "p") do
-    for md in md.content
-      html_inline(io, md)
-    end
+function html(io::IO, md::BlockQuote)
+  withtag(io, :blockquote) do
+    html(io, block.content)
   end
 end
 
-function writemime(io::IO, ::MIME"text/html", md::BlockQuote)
-  with_tag(io, "blockquote") do
-    writemime(io, "text/html", Block(md.content))
-  end
-end
-
-function writemime(io::IO, ::MIME"text/html", md::List)
-  with_tag(io, "ul") do
-    for item in md.content
-      with_tag(io, "li") do
-        html_inline(io, item)
+function html(io::IO, md::List)
+  withtag(io, :ul) do
+    for item in md.items
+      withtag(io, :li) do
+        htmlinline(io, item)
+        println(io)
       end
     end
   end
 end
 
+html(io::IO, x) = tohtml(io, x)
+
 # Inline elements
 
-function writemime(io::IO, ::MIME"text/html", md::Plain)
-  print(io, md.text)
+function htmlinline(io::IO, content::Vector)
+  for x in content
+    htmlinline(io, x)
+  end
 end
 
-function writemime(io::IO, ::MIME"text/html", md::Bold)
-  with_tag(io, "strong") do
+function htmlinline(io::IO, code::Code)
+  withtag(io, :code) do
+    print(io, code.code)
+  end
+end
+
+function htmlinline(io::IO, md::String)
+  print(io, md)
+end
+
+function htmlinline(io::IO, md::Bold)
+  withtag(io, :strong) do
     print(io, md.text)
   end
 end
 
-function writemime(io::IO, ::MIME"text/html", md::Italic)
-  with_tag(io, "em") do
+function htmlinline(io::IO, md::Italic)
+  withtag(io, :em) do
     print(io, md.text)
   end
 end
 
-function writemime(io::IO, ::MIME"text/html", md::Image)
-  print(io, """<img src="$(md.url)" alt="$(md.alt)"></img>""")
+function htmlinline(io::IO, md::Image)
+  print(io, """<img src="$(md.url)" alt="$(md.alt)" />""")
 end
 
-function writemime(io::IO, ::MIME"text/html", md::Link)
-  print(io, """<a href="$(md.url)">$(md.text)</a>""")
+function htmlinline(io::IO, link::Link)
+  print(io, """<a href="$(link.url)">""")
+  htmlinline(io, link.text)
+  print(io,"""</a>""")
 end
 
-html_inline(io::IO, el::Content) = writemime(io, "text/html", el)
+htmlinline(io::IO, x) = tohtml(io, x)
 
-html(md::Content) = stringmime("text/html", md)
+# API
+
+export html
+
+html(md) = sprint(html, md)
+
+function Base.writemime(io::IO, ::MIME"text/html", md::MD)
+  println(io, """<div class="markdown">""")
+  html(io, md)
+  println(io, """</div>""")
+end

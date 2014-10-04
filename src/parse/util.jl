@@ -1,3 +1,5 @@
+using Lazy
+
 import Base: peek
 
 const whitespace = " \t\r"
@@ -5,7 +7,7 @@ const whitespace = " \t\r"
 """
 Skip any leading whitespace. Returns io.
 """
-function skip_whitespace(io::IO; newlines = true)
+function skipwhitespace(io::IO; newlines = true)
   while !eof(io) && (peek(io) in whitespace || (newlines && peek(io) == '\n'))
     read(io, Char)
   end
@@ -15,7 +17,7 @@ end
 """
 Skip any leading blank lines. Returns the number skipped.
 """
-function skip_blank_lines(io::IO)
+function skipblank(io::IO)
   start = position(io)
   i = 0
   while !eof(io)
@@ -31,9 +33,9 @@ end
 Returns true if the line contains only (and
 at least one of) the characters given.
 """
-function next_line_contains_only(io::IO, chars::String; allow_whitespace = true,
-                                                        eat = false,
-                                                        allowempty = false)
+function linecontains(io::IO, chars; allow_whitespace = true,
+                                     eat = true,
+                                     allowempty = false)
   start = position(io)
   l = readline(io) |> chomp
   length(l) == 0 && return allowempty
@@ -48,9 +50,11 @@ function next_line_contains_only(io::IO, chars::String; allow_whitespace = true,
   return result
 end
 
-function blankline(io::IO)
-  !eof(io) && next_line_contains_only(io, "", allow_whitespace = true, allowempty = true)
-end
+blankline(io::IO; eat = true) =
+  linecontains(io, "",
+               allow_whitespace = true,
+               allowempty = true,
+               eat = eat)
 
 """
 Test if the stream starts with the given string.
@@ -59,7 +63,7 @@ Test if the stream starts with the given string.
 """
 function startswith(stream::IO, s::String; eat = true, padding = false, newlines = true)
   start = position(stream)
-  padding && skip_whitespace(stream, newlines = newlines)
+  padding && skipwhitespace(stream, newlines = newlines)
   result = true
   for char in s
     !eof(stream) && read(stream, Char) == char ||
@@ -69,6 +73,15 @@ function startswith(stream::IO, s::String; eat = true, padding = false, newlines
   return result
 end
 
+function startswith(stream::IO, c::Char; eat = true)
+  if peek(stream) == c
+    eat && read(stream, Char)
+    return true
+  else
+    return false
+  end
+end
+
 function startswith{T<:String}(stream::IO, ss::Vector{T}; kws...)
   any(s->startswith(stream, s; kws...), ss)
 end
@@ -76,7 +89,7 @@ end
 function startswith(stream::IO, r::Regex; eat = true, padding = false)
   @assert beginswith(r.pattern, "^")
   start = position(stream)
-  padding && skip_whitespace(stream)
+  padding && skipwhitespace(stream)
   line = chomp(readline(stream))
   seek(stream, start)
   m = match(r, line)
@@ -86,20 +99,41 @@ function startswith(stream::IO, r::Regex; eat = true, padding = false)
 end
 
 """
-Read the stream until the delimiter is met.
-The delimiter is consumed but not included.
+Executes the block of code, and if the return value is `nothing`,
+returns the stream to its initial position.
 """
-function read_until(stream::IO, delimiter::String, newlines = false)
-  start = position(stream)
-  buffer = IOBuffer()
-  while !eof(stream)
-    startswith(stream, delimiter) && return takebuf_string(buffer)
-    char = read(stream, Char)
-    !newlines && char == '\n' && break
-    write(buffer, char)
+function withstream(f, stream)
+  pos = position(stream)
+  result = f()
+  (result ≡ nothing || result ≡ false) && seek(stream, pos)
+  return result
+end
+
+"""
+Read the stream until startswith(stream, delim)
+The delimiter is consumed but not included.
+Returns nothing and resets the stream if delim is
+not found.
+"""
+function readuntil(stream::IO, delimiter; newlines = false, match = nothing)
+  withstream(stream) do
+    buffer = IOBuffer()
+    count = 0
+    while !eof(stream)
+      if startswith(stream, delimiter)
+        if count == 0
+          return takebuf_string(buffer)
+        else
+          count -= 1
+          write(buffer, delimiter)
+        end
+      end
+      char = read(stream, Char)
+      char == match && (count += 1)
+      !newlines && char == '\n' && break
+      write(buffer, char)
+    end
   end
-  seek(stream, start)
-  return nothing
 end
 
 """
@@ -107,26 +141,25 @@ Parse a symmetrical delimiter which wraps words.
 i.e. `*word word*` but not `*word * word`
 """
 function parse_inline_wrapper(stream::IO, delimiter::String, no_newlines = true)
-  start = position(stream)
-  startswith(stream, delimiter) || return nothing
+  withstream(stream) do
+    startswith(stream, delimiter) || return nothing
 
-  buffer = IOBuffer()
-  while !eof(stream)
-    char = read(stream, Char)
-    no_newlines && char == '\n' && break
-    if !(char in whitespace) && startswith(stream, delimiter)
+    buffer = IOBuffer()
+    while !eof(stream)
+      char = read(stream, Char)
+      no_newlines && char == '\n' && break
+      if !(char in whitespace) && startswith(stream, delimiter)
+        write(buffer, char)
+        return takebuf_string(buffer)
+      end
       write(buffer, char)
-      return takebuf_string(buffer)
     end
-    write(buffer, char)
   end
-
-  seek(stream, start)
-  return nothing
 end
 
-function show_rest(io::IO)
+function showrest(io::IO)
   start = position(io)
   show(readall(io))
+  println()
   seek(io, start)
 end

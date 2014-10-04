@@ -1,50 +1,39 @@
-function fenced_code(stream::IO, block::Block, config::Config)
+@breaking true ->
+function fencedcode(stream::IO, block::MD, config::Config)
   startswith(stream, "```", padding = true) || return false
   readline(stream)
   buffer = IOBuffer()
   while !eof(stream)
     startswith(stream, "```") && break
-    write(buffer, read(stream, Char))
+    write(buffer, readline(stream))
   end
-  push!(block, BlockCode(takebuf_string(buffer) |> chomp))
+  push!(block, Code(takebuf_string(buffer) |> chomp))
   return true
 end
 
-function github_paragraph(stream::IO, block::Block, config::Config)
+function github_paragraph(stream::IO, md::MD, config::Config)
+  skipwhitespace(stream)
   buffer = IOBuffer()
-  md = Paragraph()
-  push!(block, md)
-  skip_whitespace(stream)
+  p = Paragraph()
+  push!(md, p)
   while !eof(stream)
     char = read(stream, Char)
     if char == '\n'
       eof(stream) && break
-      next = peek(stream)
-      if next == '\n' || stop(stream, config.triggers)
+      if blankline(stream) || parse(stream, md, config, breaking = true)
         break
       else
         write(buffer, '\n')
       end
     else
-      if char in config.inner.triggers &&
-          (inner = parse_inner(stream, config, offset = -1)) != nothing
-        push!(md, Plain(takebuf_string(buffer)))
-        buffer = IOBuffer()
-        push!(md, inner)
-      else
-        write(buffer, char)
-      end
+      write(buffer, char)
     end
   end
-  push!(md.content, Plain(takebuf_string(buffer)))
+  p.content = parseinline(seek(buffer, 0), config)
   return true
 end
 
-github = Config(
-  # Block elements
-  ["```", '#', underline_header_trigger],
-  [list, indented_code, blockquote, fenced_code, underline_header, hash_header, github_paragraph],
-  # Inline elements
-  "-`*![", [en_dash, inline_code, asterisk_bold, asterisk_italic, image, link])
+# TODO: tables
 
-flavours[:github] = github
+@flavour github [list, indentcode, blockquote, fencedcode, hashheader, github_paragraph,
+                 en_dash, inline_code, asterisk_bold, asterisk_italic, image, link]

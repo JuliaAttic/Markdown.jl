@@ -33,4 +33,12 @@ Where the arguments have automatically been interpolated into the docstring. Thi
 Any object displayable as HTML can be interpolated directly into documentation. For example:
 
 ```julia
+"""
+Returns a random walk, which will look something like:
+
+$(plot(y=randwalk(100), x=1:100))
+
+* `n`: The number of samples in the walk.
+"""
+randwalk(n) = cumsum(rand(n))
 ```

@@ -1,74 +1,82 @@
-include("util.jl")
+type MD
+  content::Vector{Any}
 
-export Config
-
-type InnerConfig
-  triggers::UTF8String
-  parsers::Vector{Function}
+  MD(x::AbstractVector) = new(x)
 end
 
-type Config
-  triggers::Vector
-  parsers::Vector{Function}
-  inner::InnerConfig
-end
+MD(xs...) = MD([xs...])
 
-Config(triggers, parsers, inner_triggers, inner_parsers) =
-  Config(triggers, parsers, InnerConfig(inner_triggers, inner_parsers))
+# Forward some array methods
 
-function stop(stream::IO, trigger::Char)
-  !eof(stream) && peek(stream) == trigger
-end
+Base.push!(md::MD, x) = push!(md.content, x)
+Base.getindex(md::MD, args...) = md.content[args...]
+Base.setindex!(md::MD, args...) = setindex!(md.content, args...)
+Base.endof(md::MD) = endof(md.content)
+Base.length(md::MD) = length(md.content)
+Base.isempty(md::MD) = isempty(md.content)
 
-function stop(stream::IO, trigger::String)
-  startswith(stream, trigger, eat = false)
-end
+# Parser functions:
+#   md – should be modified appropriately
+#   return – basically, true if parse was successful
+#     false uses the next parser in the queue, true
+#     goes back to the beginning
+# 
+# Inner parsers:
+#   return – element to use or nothing
 
-function stop(stream::IO, trigger::Function)
-  trigger(stream)
-end
+# Inner parsing
 
-function stop(stream::IO, triggers::Vector)
-  any(t -> stop(stream, t), triggers)
-end
-
-"""
-Parser functions:
-  md – should be modified appropriately
-  return – basically, true if parse was successful
-    false uses the next parser in the queue, true
-    goes back to the beginning
-
-Inner parsers:
-  return – element to use or nothing
-"""
-
-function parse_inner(stream::IO, parsers::Vector{Function}; offset = 0)
-  skip(stream, offset)
+function innerparse(stream::IO, parsers::Vector{Function})
   for parser in parsers
     inner = parser(stream)
-    inner == nothing || return inner
+    inner ≡ nothing || return inner
   end
-  skip(stream, -offset)
-  return nothing
 end
 
-parse_inner(stream::IO, config::Config; offset = 0) =
-  parse_inner(stream, config.inner.parsers; offset=offset)
+innerparse(stream::IO, config::Config) =
+  innerparse(stream, config.inner.parsers)
 
-function parse(stream::IO, block::Block, config::Config)
+function parseinline(stream::IO, config::Config)
+  content = {}
+  buffer = IOBuffer()
+  while !eof(stream)
+    char = peek(stream)
+    if haskey(config.inner, char) &&
+        (inner = innerparse(stream, config.inner[char])) != nothing
+      c = takebuf_string(buffer)
+      !isempty(c) && push!(content, c)
+      buffer = IOBuffer()
+      push!(content, inner)
+    else
+      write(buffer, read(stream, Char))
+    end
+  end
+  c = takebuf_string(buffer)
+  !isempty(c) && push!(content, c)
+  return content
+end
+
+parseinline(s::String, c::Config) =
+  parseinline(IOBuffer(s), c)
+
+parseinline(s) = parseinline(s, _config_)
+
+# Block parsing
+
+function parse(stream::IO, block::MD, config::Config; breaking = false)
+  skipblank(stream)
   eof(stream) && return false
-  for parser in config.parsers
+  for parser in (breaking ? config.breaking : [config.breaking, config.regular])
     parser(stream, block, config) && return true
   end
   return false
 end
 
-const flavours = Dict{Symbol, Config}()
-
 function parse(stream::IO; flavour = julia)
   isa(flavour, Symbol) && (flavour = flavours[flavour])
-  markdown = Block()
-  while parse(stream, markdown, flavour) end
+  markdown = MD()
+  withconfig(flavour) do
+    while parse(stream, markdown, flavour) end
+  end
   return markdown
 end

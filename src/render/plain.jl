@@ -1,51 +1,64 @@
-import Base.writemime
+plain(x) = sprint(plain, x)
 
-# writemime seems to take priority over show?
+function plain(io::IO, content::Vector)
+  for md in content[1:end-1]
+    plain(io, md)
+    println(io)
+  end
+  plain(io, content[end])
+end
 
-# function writemime(io::IO, mime::MIME"text/plain", block::Block)
-#   for md in block.content[1:end-1]
-#     writemime(io::IO, mime, md)
-#     println(io)
-#   end
-#   writemime(io::IO, mime, block.content[end])
-# end
+plain(io::IO, md::MD) = plain(io, md.content)
 
-# function writemime{l}(io::IO, mime::MIME"text/plain", header::Header{l})
-#   print(io, "#"^l*" ")
-#   println(io, header.text)
-# end
+function plain{l}(io::IO, header::Header{l})
+  print(io, "#"^l*" ")
+  plaininline(io, header.text)
+  println(io)
+end
 
-# function writemime(io::IO, ::MIME"text/plain", code::Code)
-#   for line in split(code.code, "\n")
-#     println(io, line)
-#   end
-# end
+function plain(io::IO, code::Code)
+  println(io, "```", code.language)
+  println(io, code.code)
+  println(io, "```")
+end
 
-# function writemime(io::IO, ::MIME"text/plain", md::Paragraph)
-#   for md in md.content
-#     print_inline(io, md)
-#   end
-#   println(io)
-# end
+function plain(io::IO, p::Paragraph)
+  for md in p.content
+    plaininline(io, md)
+  end
+  println(io)
+end
 
-# function writemime(io::IO, ::MIME"text/plain", md::List)
-#   for item in md.content
-#     print(io, "  * ")
-#     print_inline(io, item)
-#     println(io)
-#   end
-# end
+function plain(io::IO, list::List)
+  for item in list.items
+    print(io, "  * ")
+    plaininline(io, item)
+    println(io)
+  end
+end
+
+plain(io::IO, x) = tohtml(io, x)
 
 # Inline elements
 
-print_inline(io::IO, el::Content) = writemime(io, "text/plain", el)
+function plaininline(io::IO, md::Vector)
+  for el in md
+    plaininline(io, el)
+  end
+end
 
-print_inline(io::IO, md::Image) = print(io, "![$(md.alt)](md.url)")
+plaininline(io::IO, md::Image) = print(io, "![$(md.alt)]($(md.url))")
 
-print_inline(io::IO, md::Plain) = print(io, md.text)
+plaininline(io::IO, s::String) = print(io, s)
 
-print_inline(io::IO, md::Bold) = print(io, "**", md.text, "**")
+plaininline(io::IO, md::Bold) = print(io, "**", md.text, "**")
 
-print_inline(io::IO, md::Italic) = print(io, "*", md.text, "*")
+plaininline(io::IO, md::Italic) = print(io, "*", md.text, "*")
 
-print_inline(io::IO, md::InlineCode) = print(io, "`", md.code, "`")
+plaininline(io::IO, md::Code) = print(io, "`", md.code, "`")
+
+plaininline(io::IO, x) = writemime(io, MIME"text/plain"(), x)
+
+# writemime
+
+Base.writemime(io::IO, ::MIME"text/plain", md::MD) = plain(io, md)

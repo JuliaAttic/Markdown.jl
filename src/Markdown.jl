@@ -1,28 +1,39 @@
 module Markdown
 
-using Lazy
-
-include("standard/types.jl")
+include("parse/config.jl")
+include("parse/util.jl")
 include("parse/parse.jl")
-include("standard/standard.jl")
+
+include("Common/Common.jl")
 include("GitHub/GitHub.jl")
-include("doc/doc.jl")
+include("Julia/Julia.jl")
 
 include("render/plain.jl")
 include("render/html.jl")
-include("render/latex.jl")
+# include("render/latex.jl")
 
 include("render/terminal/render.jl")
 
+export readme, license, @md_str, @md_mstr
+
 parse(markdown::String; flavour = julia) = parse(IOBuffer(markdown), flavour = flavour)
 parse_file(file::String; flavour = julia) = parse(readall(file), flavour = flavour)
-
-export readme, license
 
 readme(pkg::String; flavour = julia) = parse_file(Pkg.dir(pkg, "README.md"), flavour = flavour)
 readme(pkg::Module; flavour = julia) = readme(string(pkg), flavour = flavour)
 
 license(pkg::String; flavour = julia) = parse_file(Pkg.dir(pkg, "LICENSE.md"), flavour = flavour)
 license(pkg::Module; flavour = julia) = license(string(pkg), flavour = flavour)
+
+macro md_str(s, t...)
+  md = isempty(t) ? parse(s) : parse(s, flavour = symbol(t[1]))
+  esc(toexpr(md))
+end
+
+macro md_mstr(s, t...)
+  s = Base.triplequoted(s)
+  md = isempty(t) ? parse(s) : parse(s, flavour = symbol(t[1]))
+  esc(toexpr(md))
+end
 
 end
