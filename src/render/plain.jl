@@ -37,6 +37,8 @@ function plain(io::IO, list::List)
   end
 end
 
+plain(io::IO, x) = tohtml(io, x)
+
 # Inline elements
 
 function plaininline(io::IO, md::Vector)
@@ -54,6 +56,8 @@ plaininline(io::IO, md::Bold) = print(io, "**", md.text, "**")
 plaininline(io::IO, md::Italic) = print(io, "*", md.text, "*")
 
 plaininline(io::IO, md::Code) = print(io, "`", md.code, "`")
+
+plaininline(io::IO, x) = writemime(io, MIME"text/plain"(), x)
 
 # writemime
 

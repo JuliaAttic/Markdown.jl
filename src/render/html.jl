@@ -1,3 +1,5 @@
+include("rich.jl")
+
 # Utils
 
 function withtag(f, io, tag)
@@ -54,6 +56,8 @@ function html(io::IO, md::List)
   end
 end
 
+html(io::IO, x) = tohtml(io, x)
+
 # Inline elements
 
 function htmlinline(io::IO, content::Vector)
@@ -93,6 +97,8 @@ function htmlinline(io::IO, link::Link)
   htmlinline(io, link.text)
   print(io,"""</a>""")
 end
+
+htmlinline(io::IO, x) = tohtml(io, x)
 
 # API
 

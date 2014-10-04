@@ -64,6 +64,8 @@ function term(io::IO, md::Code, columns)
   end
 end
 
+term(io::IO, x, _) = writemime(io, MIME"text/plain"(), x)
+
 # Inline Content
 
 terminline(md) = sprint(terminline, md)
@@ -97,6 +99,8 @@ end
 function terminline(io::IO, code::Code)
   print_with_format(:cyan, io, code.code)
 end
+
+terminline(io::IO, x) = writemime(io, MIME"text/plain"(), x)
 
 # Show in terminal
 
