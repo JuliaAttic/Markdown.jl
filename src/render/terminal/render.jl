@@ -38,10 +38,11 @@ function term(io::IO, md::List, columns)
 end
 
 function term(io::IO, md::Header{1}, columns)
+  text = terminline(md.text)
   with_output_format(:bold, io) do io
-    print_centred(io, sprint(terminline, md.text), width = columns - 4margin, columns = columns)
+    print_centred(io, text, width = columns - 4margin, columns = columns)
   end
-  print_centred(io, "-"*"–"^min(length(md.text), div(columns, 2))*"-", columns = columns)
+  print_centred(io, "-"*"–"^min(length(text), div(columns, 2))*"-", columns = columns)
 end
 
 function term{l}(io::IO, md::Header{l}, columns)
