@@ -124,18 +124,20 @@ end
 
 List(xs...) = List([xs...])
 
+const bullets = ["* ", "• ", "+ ", "- "]
+
 # Todo: ordered lists, inline formatting
 function list(stream::IO, block::MD, config::Config)
   withstream(stream) do
     skipwhitespace(stream)
-    startswith(stream, ["* ", "• "]) || return false
+    startswith(stream, bullets) || return false
     the_list = List()
     buffer = IOBuffer()
     fresh_line = false
     while !eof(stream)
       if fresh_line
         skipwhitespace(stream)
-        if startswith(stream, ["* ", "• "])
+        if startswith(stream, bullets)
           push!(the_list.items, takebuf_string(buffer))
           buffer = IOBuffer()
         else
