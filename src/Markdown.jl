@@ -14,7 +14,7 @@ include("render/html.jl")
 
 include("render/terminal/render.jl")
 
-export readme, license, @md_str, @md_mstr
+export readme, license, @md_str, @md_mstr, @doc_str, @doc_mstr
 
 parse(markdown::String; flavour = julia) = parse(IOBuffer(markdown), flavour = flavour)
 parse_file(file::String; flavour = julia) = parse(readall(file), flavour = flavour)
@@ -30,22 +30,32 @@ function mdexpr(s, flavour = :julia)
   esc(toexpr(md))
 end
 
+function docexpr(s, flavour = :julia)
+  quote
+    let md = $(mdexpr(s, flavour))
+      md.meta[:path] = @__FILE__
+      md.meta[:module] = current_module()
+      md
+    end
+  end
+end
+
 macro md_str(s, t...)
-  mdexpr(s)
+  mdexpr(s, t...)
 end
 
 macro md_mstr(s, t...)
   s = Base.triplequoted(s)
-  mdexpr(s)
+  mdexpr(s, t...)
 end
 
 macro doc_str(s, t...)
-  mdexpr(s)
+  docexpr(s, t...)
 end
 
 macro doc_mstr(s, t...)
   s = Base.triplequoted(s)
-  mdexpr(s)
+  docexpr(s, t...)
 end
 
 end
