@@ -1,7 +1,9 @@
 type MD
   content::Vector{Any}
+  meta::Dict{Any, Any}
 
-  MD(x::AbstractVector) = new(x)
+  MD(content::AbstractVector, meta::Dict = Dict()) =
+    new(content, meta)
 end
 
 MD(xs...) = MD([xs...])
