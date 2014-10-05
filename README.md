@@ -13,6 +13,8 @@ IPython and Julia flavoured markdown.
 
 You can construct Markdown by parsing it with `Markdown.parse("...")` or inline with the `md"..."` string macro. The created object will display itself nicely in HTML environments and the terminal.
 
+You can also grab a package's readme with e.g. `readme("Markdown")`.
+
 Say we have a docstring that looks like so:
 
 ```julia
