@@ -25,15 +25,27 @@ readme(pkg::Module; flavour = julia) = readme(string(pkg), flavour = flavour)
 license(pkg::String; flavour = julia) = parse_file(Pkg.dir(pkg, "LICENSE.md"), flavour = flavour)
 license(pkg::Module; flavour = julia) = license(string(pkg), flavour = flavour)
 
-macro md_str(s, t...)
-  md = isempty(t) ? parse(s) : parse(s, flavour = symbol(t[1]))
+function mdexpr(s, flavour = :julia)
+  md = parse(s, flavour = symbol(flavour))
   esc(toexpr(md))
+end
+
+macro md_str(s, t...)
+  mdexpr(s)
 end
 
 macro md_mstr(s, t...)
   s = Base.triplequoted(s)
-  md = isempty(t) ? parse(s) : parse(s, flavour = symbol(t[1]))
-  esc(toexpr(md))
+  mdexpr(s)
+end
+
+macro doc_str(s, t...)
+  mdexpr(s)
+end
+
+macro doc_mstr(s, t...)
+  s = Base.triplequoted(s)
+  mdexpr(s)
 end
 
 end
