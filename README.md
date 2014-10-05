@@ -48,3 +48,5 @@ In Juno (pending CSS updates), like so:
 What's that you say? Yes, I believe it is an interpolated Gadfly plot. Yes, it is indeed interactive. No, this probably won't actually be useful until we standardise on a plotting package in Base, but it's still pretty cool, right?
 
 Incidentally, the interpolation also potentially solves the problem of growing a non-standard Markdown implementation, since anything we need can actually be interpolated as an object with appropriate `writemime` methods defined. I do plan to have Markdown syntax for tables, equations etc. anyway but until then you can always just interp. an `Equation` object of some sort.
+
+So now all we need is syntax highlighting and Mathematica-style ASCII equation rendering and we're all set.
