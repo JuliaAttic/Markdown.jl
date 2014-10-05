@@ -1,6 +1,12 @@
-using Lazy
-
 import Base: peek
+
+macro dotimes(n, body)
+  quote
+    for i = 1:$(esc(n))
+      $(esc(body))
+    end
+  end
+end
 
 const whitespace = " \t\r"
 
