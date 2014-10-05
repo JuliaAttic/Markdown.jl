@@ -19,11 +19,11 @@ export readme, license, @md_str, @md_mstr, @doc_str, @doc_mstr
 parse(markdown::String; flavour = julia) = parse(IOBuffer(markdown), flavour = flavour)
 parse_file(file::String; flavour = julia) = parse(readall(file), flavour = flavour)
 
-readme(pkg::String; flavour = julia) = parse_file(Pkg.dir(pkg, "README.md"), flavour = flavour)
-readme(pkg::Module; flavour = julia) = readme(string(pkg), flavour = flavour)
+readme(pkg::String; flavour = github) = parse_file(Pkg.dir(pkg, "README.md"), flavour = flavour)
+readme(pkg::Module; flavour = github) = readme(string(pkg), flavour = flavour)
 
-license(pkg::String; flavour = julia) = parse_file(Pkg.dir(pkg, "LICENSE.md"), flavour = flavour)
-license(pkg::Module; flavour = julia) = license(string(pkg), flavour = flavour)
+license(pkg::String; flavour = github) = parse_file(Pkg.dir(pkg, "LICENSE.md"), flavour = flavour)
+license(pkg::Module; flavour = github) = license(string(pkg), flavour = flavour)
 
 function mdexpr(s, flavour = :julia)
   md = parse(s, flavour = symbol(flavour))
