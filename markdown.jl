@@ -16,7 +16,7 @@ if input in ("\n", "")
 end
 
 try
-  output = stringmime("text/html", Markdown.parse(input, flavour = :standard))
+  output = stringmime("text/html", Markdown.parse(input, flavor = :standard))
 
   println(output)
 
