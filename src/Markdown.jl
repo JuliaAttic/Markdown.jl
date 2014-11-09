@@ -2,6 +2,8 @@ module Markdown
 
 import Base: writemime
 
+typealias String AbstractString
+
 include("parse/config.jl")
 include("parse/util.jl")
 include("parse/parse.jl")
