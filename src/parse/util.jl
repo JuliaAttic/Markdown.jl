@@ -144,16 +144,20 @@ end
 
 """
 Parse a symmetrical delimiter which wraps words.
-i.e. `*word word*` but not `*word * word`
+i.e. `*word word*` but not `*word * word`.
+`repeat` specifies whether the delimiter can be repeated.
+Escaped delimiters are not yet supported.
 """
-function parse_inline_wrapper(stream::IO, delimiter::String)
+function parse_inline_wrapper(stream::IO, delimiter::String; repeat = false)
   withstream(stream) do
     startswith(stream, delimiter) || return nothing
+    n = 1
+    while repeat && startswith(stream, delimiter); (n += 1) end
 
     buffer = IOBuffer()
     while !eof(stream)
       char = read(stream, Char)
-      if !(char in whitespace) && startswith(stream, delimiter)
+      if !(char in whitespace) && startswith(stream, delimiter^n)
         write(buffer, char)
         return takebuf_string(buffer)
       end
