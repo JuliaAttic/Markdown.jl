@@ -146,14 +146,13 @@ end
 Parse a symmetrical delimiter which wraps words.
 i.e. `*word word*` but not `*word * word`
 """
-function parse_inline_wrapper(stream::IO, delimiter::String, no_newlines = true)
+function parse_inline_wrapper(stream::IO, delimiter::String)
   withstream(stream) do
     startswith(stream, delimiter) || return nothing
 
     buffer = IOBuffer()
     while !eof(stream)
       char = read(stream, Char)
-      no_newlines && char == '\n' && break
       if !(char in whitespace) && startswith(stream, delimiter)
         write(buffer, char)
         return takebuf_string(buffer)
