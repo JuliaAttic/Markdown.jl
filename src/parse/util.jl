@@ -148,11 +148,11 @@ i.e. `*word word*` but not `*word * word`.
 `repeat` specifies whether the delimiter can be repeated.
 Escaped delimiters are not yet supported.
 """
-function parse_inline_wrapper(stream::IO, delimiter::String; repeat = false)
+function parse_inline_wrapper(stream::IO, delimiter::String; rep = false)
   withstream(stream) do
     startswith(stream, delimiter) || return nothing
     n = 1
-    while repeat && startswith(stream, delimiter); (n += 1) end
+    while rep && startswith(stream, delimiter); (n += 1) end
 
     buffer = IOBuffer()
     while !eof(stream)
