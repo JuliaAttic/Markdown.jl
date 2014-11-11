@@ -1,5 +1,7 @@
 module Markdown
 
+import Base: writemime
+
 include("parse/config.jl")
 include("parse/util.jl")
 include("parse/parse.jl")
