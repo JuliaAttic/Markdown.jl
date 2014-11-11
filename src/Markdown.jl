@@ -8,6 +8,7 @@ include("parse/parse.jl")
 
 include("Common/Common.jl")
 include("GitHub/GitHub.jl")
+include("IPython/IPython.jl")
 include("Julia/Julia.jl")
 
 include("render/plain.jl")
