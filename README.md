@@ -1,7 +1,7 @@
 # Markdown
 
 ```julia
-Markdown.parse("file.md")
+Markdown.parse_file("file.md")
 readme("Markdown") # or any other installed package
 ```
 
