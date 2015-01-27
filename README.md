@@ -9,6 +9,8 @@ readme("Markdown") # or any other installed package
 It supports a preliminary implementation of CommonMark as well as GitHub,
 IPython and Julia flavoured markdown.
 
+*Note that Markdown.jl lives in Base Julia form 0.4 onwards. PRs and changes should be made over there.*
+
 ## Examples
 
 You can construct Markdown by parsing it with `Markdown.parse("...")` or inline with the `md"..."` string macro. The created object will display itself nicely in HTML environments and the terminal.
