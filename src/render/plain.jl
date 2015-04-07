@@ -1,6 +1,7 @@
 plain(x) = sprint(plain, x)
 
 function plain(io::IO, content::Vector)
+  isempty(content) && return
   for md in content[1:end-1]
     plain(io, md)
     println(io)
