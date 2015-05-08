@@ -1,5 +1,8 @@
-using Markdown
+module Tests
+
 using Base.Test
 
-# write your own tests here
-@test 1 == 1
+include("../src/Markdown.jl")
+include("markdown.jl")
+
+end
